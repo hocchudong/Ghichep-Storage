@@ -2,7 +2,7 @@
 
 **Cú pháp của lệnh như sau:**
 
-dd  if=<source file name> of=<target file name> [Options] 
+`dd  if=<source file name> of=<target file name> [Options]` 
 
 **Ví dụ sử dụng lệnh dd để kiểm tra tốc độ ghi của 1 ổ cứng:**
 
