@@ -14,7 +14,7 @@ Trong đó:
 if= 	Dữ liệu đầu vào
 of=		Dữ liệu đầu ra (ghi vào file output.img)
 bs=		Kích thước 1 block
-count=  số block (ghi 256*1024 lần bs=4k vào file output.img)
-conv=fdatasync: 	Kiểm tra tốc độ ghi khi đã đồng bộ dữ liệu vào ổ cứng (nếu không có option này, câu lệnh sẽ chỉ kiểm tra tốc độ ghi vào RAM)
+count= số block (ghi 256*1024 lần bs=4k vào file output.img)
+conv=fdatasync: Kiểm tra tốc độ ghi khi đã đồng bộ dữ liệu vào ổ cứng (nếu không có option này, câu lệnh sẽ chỉ kiểm tra tốc độ ghi vào RAM)
 ```
 
