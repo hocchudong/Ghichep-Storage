@@ -49,7 +49,39 @@ các phân vùng ổ đĩa khác nhau có thể được thiết lập bằng c�
 Có những cải tiến kĩ thuật trên FAT và HPFS, cải thiện khả năng hỗ trợ cho các metadata và sử dụng các cấu trúc dữ liệu tiên tiến để cải thiện hiệu suất. Thêm vào đó là phần mở rộng bổ sung chẳng hạn như kiểm soát truy cập bảo mật danh sách (ACL) và filesystem journaling
 
 ####6. XFS:
-Filesystem journaling được phát triển bởi SGI, nó cung cấp thông lượng rất nhanh trên các tập tin lớn và filesystem
+Filesystem journaling được phát triển bởi SGI, nó cung cấp thông lượng rất nhanh trên các tập tin lớn và filesystem. Khá tương đồng với Ext4 về một số mặt, chẳng hạn như hạn chế được tình trạng phân mảnh dữ liệu, không cho phép các snapshot tự động kết hợp với nhau, hỗ trợ nhiều file dung lượng lớn, có thể thay đổi kích thước file dữ liệu. XFS khá phù hợp với việc áp dụng vào mô hình server media vì khả năng truyền tải file video rất tốt.
+
+####7. Btrfs:
+Đại diện cho B-Tree File System, hỗ trợ tính năng pool trên ổ cứng, tạo và lưu trữ snapshot, nén dữ liệu ở mức độ cao, chống phân mảnh dữ liệu nhanh chóng... được thiết kế riêng biệt dành cho các doanh nghiệp có quy mô lớn. BtrFS rất phù hợp để hoạt động với server dựa vào hiệu suất làm việc cao, khả năng tạo snapshot nhanh chóng cũng như hỗ trợ nhiều tính năng đa dạng khác.
+
+###So sánh Filesystem:
+
+| Filesystem | EXT2 | EXT3 | EXT4 | Btrfs | XFS |
+|------------|------|------|------|-------|-----|
+| Journaling | Không có | Có Journaling | Có Journaling | Có Journaling | Có Journaling |
+| Tốc độ ghi | tương đối nhanh | chậm hơn so với ext2 | tốc độ ghi nhanh hơn so với ext2,3 | tốc độ hoạt động nhanh | hiệu suất hoạt động không cao |
+| Phục hồi dữ liệu | cần fsck để phục hồi dữ liệu | tự động file phục hồi dữ liệu | tự động file phục hồi dữ liệu | | |
+| Max file size ( Block size 1KB-8KB) | 16GB-2TB  | 16GB-2TB | 16GB-16TB | 16 EB | 8 exbibytes-1 byte |
+| Max filename size | 255 bytes | 255 bytes | 255 bytes | 255 ASCII character | 255 bytes |
+
+##Filesystem trên Window:
+####FAT: Là filesystem được hỗ trợ bởi Window NT, để bảo vệ volume, 2 bản sao của FAT sẽ được lưu trữ trong trường hợp 1 cái bị hỏng, hỗ trợ kích thước phân vùng khoảng 2GB đến 2TB. Max file name size là 255 character. Tuy nhiên tính bảo mật và chịu lỗi không cao.
+
+####NTFS: NTFS (New Technology File System) là định dạng hiện đại hơn so với FAT. Một số tính năng hiện đại của NTFS có thể kể đến là các tính năng về bảo mật như: đặt quyền truy cập cho tập tin; ghi nhận những thay đổi dữ liệu giúp dễ dàng phục hồi nếu máy tính gặp sự cố; tạo các bản sao (copy) dành cho sao lưu (backup); mã hoá (encryption); đặt hạn ngạch đĩa (disk quota limit). NTFS cũng hỗ trợ các ổ đĩa lớn và các giải pháp lưu trữ như RAID.
+
+####So sánh giữa FAT32,16 và NTFS:
+
+| Filesystem | NTFS | FAT32 | FAT 16 |
+|------------|-------|------|--------|
+| Max partition size | 2TB | 2TB | 2GB |
+| Số file trên partition | Không hạn chế | Không hạn chế | 65000 |
+| Max file size | Chỉ hạn chế bởi kích thước partition | 4GB | 2GB |
+| File name lenght | 255 characters | 255 characters | 255 |
+| Chế độ bảo mật | Có | Không | Không |
+| Khả năng hồi phục | Có | Không | Không |
+| Hiệu năng hoạt động | Thấp trên các ổ đĩa nhỏ, cao trên các ổ đĩa lớn | Cao trên các ổ đĩa nhỏ và thấp trên các ổ đĩa lớn | Cao trên ổ đĩa nhỏ và thấp trên các ổ đĩa lớn |
+
+
 
 ####Journaling mode
 <ul>
