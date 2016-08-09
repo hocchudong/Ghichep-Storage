@@ -52,7 +52,7 @@ http://genk.vn/thu-thuat/huong-dan-cach-chia-se-du-lieu-giua-windows-va-linux-20
 <ul>
 <li>Windows sử dụng giao thức SMB chủ yếu để cung cấp truy cập chia sẻ để các tập tin , máy in , và cổng nối tiếp và truyền thông linh tinh giữa các nút trên mạng.</li>
 <li>Microsoft sử dụng SMB cùng với giao thức xác thực NTLM để cung cấp dịch vụ gọi là chia sẻ file và máy in ở mức user. Khi một user đã đăng nhập thực hiện kết nối tới tài nguyên chia sẻ trên máy tính khác (\\server\share), Windows tự động gửi thông tin đăng nhập của user đó tới SMB server trước khi hỏi username hoặc password.</li>
-
+</ul>
 
 <a name="3"></a>
 ###3 NFS
