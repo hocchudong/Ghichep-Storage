@@ -3,7 +3,7 @@ Mục lục:
 
 [1 CIFS(Common Internet File Sharing)](#1)
 
-[###2 SMB (SAMBA)](#2)
+[2 SMB (SAMBA)](#2)
 
 [3 NFS](#3)
 
