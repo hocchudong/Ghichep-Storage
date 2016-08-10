@@ -42,6 +42,8 @@ Khóa file đang truy cập tùy theo cơ hội (oplock)
 ```
 Hạn chế: Tất cả dữ liệu chuyển giao không được mã hóa khi nó được gửi qua mạng.
 
+Hầu hết các hệ thống lưu trữ không còn sử dụng CIFS mà sử dụng SMB 2 và SMB 3. 
+
 Cài đặt CIFS trên linux để share file với Windows.
 
 http://genk.vn/thu-thuat/huong-dan-cach-chia-se-du-lieu-giua-windows-va-linux-20131203103930552.chn
@@ -52,6 +54,10 @@ http://genk.vn/thu-thuat/huong-dan-cach-chia-se-du-lieu-giua-windows-va-linux-20
 <ul>
 <li>Windows sử dụng giao thức SMB chủ yếu để cung cấp truy cập chia sẻ để các tập tin , máy in , và cổng nối tiếp và truyền thông linh tinh giữa các nút trên mạng.</li>
 <li>Microsoft sử dụng SMB cùng với giao thức xác thực NTLM để cung cấp dịch vụ gọi là chia sẻ file và máy in ở mức user. Khi một user đã đăng nhập thực hiện kết nối tới tài nguyên chia sẻ trên máy tính khác (\\server\share), Windows tự động gửi thông tin đăng nhập của user đó tới SMB server trước khi hỏi username hoặc password.</li>
+<li>Phiên bản SMB2 và SMB3 là phiên bản nâng cấp của CIFS</li>
+<li>SMB 2.0 được giới thiệu năm 2006. Nó cải thiện hiệu suất, khả năng mở rộng tốt hơn bằng cách tăng số lượng người sử dụng, tăng kích thước lưu trữ... </li>
+<li>SMB 3.0 được giới thiệu trên Windows 8 và Windows server 2012. Hỗ trợ nhiều kết nối, cải thiện bảo mật với thuật toán AES.</li>
+<li>Phiên bản mới nhất SMB 3.1.1 được giới thiệu trên Windows 10, Windows Server 2016.
 </ul>
 
 <a name="3"></a>
@@ -123,6 +129,27 @@ Logical and Physical Topologies: cho phép quản lý nền tảng thiết bị 
 Path Tuples: Fabric names and endpoint associators, like platforms, nodes and ports
 Logical components: Extents, data movers, platforms, fabric, nodes, FC and aggregators
 ```
+**Benchmark NFS vs CIFS**
+
+http://www.anandtech.com/show/7071/synology-ds1812-8bay-smb-soho-nas-review/4
+
+<img src=http://i.imgur.com/csbStvJ.png>
+
+**Benchmark NFS vs SMB**
+
+https://ferhatakgun.com/network-share-performance-differences-between-nfs-smb/
+
+<img src=http://i.imgur.com/ireVx5X.png>
+
+**Benchmark iSCSI vs SMB**
+
+https://blogs.technet.microsoft.com/larryexchange/2016/01/10/iscsi-or-smb-direct-which-one-is-better/
+
+<img src=http://i.imgur.com/8XaVsff.png>
+
+**Connecting to storage Systems using iSCSI, NFS, and CIFS (SMB)**
+
+http://www.everythingvm.com/content/connecting-storage-systems-using-iscsi-nfs-and-cifs-smb
 
 Tham khảo:
 
@@ -144,7 +171,7 @@ Tham khảo:
 
 [9]- https://www.techopedia.com/definition/1081/fiber-channel-storage-area-network-fc-san
 
-
+[10]- https://ferhatakgun.com/network-share-performance-differences-between-nfs-smb/
 
 
 
