@@ -95,10 +95,16 @@ Backup incremental Workflow
 <img src=http://i.imgur.com/WlxucW8.png>
 
 <img src=http://i.imgur.com/WR61hX2.png>
+
+Fix lỗi http://docs.openstack.org/admin-guide/blockstorage-troubleshoot.html
+
 Tham khảo:
 
 [1]- http://searchstorage.techtarget.com/definition/Cinder-OpenStack-Block-Storage
+
 [2]- http://docs.openstack.org/developer/cinder/devref/architecture.html
+
+[3]- http://docs.openstack.org/admin-guide/blockstorage-manage-volumes.html
 
 
 
