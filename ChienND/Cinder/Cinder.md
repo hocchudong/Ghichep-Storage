@@ -10,11 +10,11 @@ Mục lục:
 <a name="1"></a>
 ###1. Giới thiệu
 
-	Block Storage service cung cấp các khối lưu trữ(volume) cho các Virtual machines chạy trên Nova compute . Có thể thêm các images vào 1 Block Storage device để boot lên instance.
+Block Storage service cung cấp các khối lưu trữ(volume) cho các Virtual machines chạy trên Nova compute . Có thể thêm các images vào 1 Block Storage device để boot lên instance.
 
-	Người dùng có thể format các khối lưu trữ như một file system, mount, read/write ...
+Người dùng có thể format các khối lưu trữ như một file system, mount, read/write ...
 
-	Tính năng:
+Tính năng:
 	
 <img src=http://i.imgur.com/TniYt4U.png>
 
