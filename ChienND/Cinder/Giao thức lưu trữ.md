@@ -62,11 +62,12 @@ http://genk.vn/thu-thuat/huong-dan-cach-chia-se-du-lieu-giua-windows-va-linux-20
 
 Samba gồm 3 thành phần chính đó là smbd, nmbd và winbindd.
 
-smbd: Quản lý việc chia sẻ file và dịch vụ in cho các client, đồng thời cũng chịu trách nhiệm chứng thực người dùng bằng cách sử dụng port 139 và 445 để lắng nghe các yêu cầu đến thư mục chia sẻ trên Linux.
+**smbd**: Quản lý việc chia sẻ file và dịch vụ in cho các client, đồng thời cũng chịu trách nhiệm chứng thực người dùng bằng cách sử dụng port 139 và 445 để lắng nghe các yêu cầu đến thư mục chia sẻ trên Linux.
 Khi một client kết nối, smbd sẽ tạo ra một tiến trình mới, phục vụ cho kết nối này.
-nmdb: Lắng nghe trên port 137, chịu trách nhiệm cung cấp tên NetBIOS của samba server cho các request kết nối.
-winbindd: Dùng khi Samba là 1 phần của domain, dùng để truy vấn server Windows thông tin nhóm và người dùng.
 
+**nmdb**: Lắng nghe trên port 137, chịu trách nhiệm cung cấp tên NetBIOS của samba server cho các request kết nối.
+
+**winbindd**: Dùng khi Samba là 1 phần của domain, dùng để truy vấn server Windows thông tin nhóm và người dùng.
 
 <a name="3"></a>
 ###3 NFS
@@ -140,8 +141,11 @@ iSCSI Target Server cho phép kết nối tới iSCSI SAN mà không cần dùng
 </ul>
 
 FC có 3 topo mạng chính:
+
 **Point to point**: 2 thiết bị kết nối trực tiếp với nhau.
+
 **Arbitrated Loop**: Các thiết bị kết nối thành một vòng. Khi thêm hoặc loại bỏ một thiết bị trên vòng gây nên gián đoạn cho hoạt động. Chỉ có 2 cổng giao tiếp đồng thời.
+
 **Switched Fabric**: Các thiết bị kết nối tới Fibre Channel switches. Nhiều cặp cổng có thể giao tiếp cùng lúc. Gián đoạn của 1 port ko ảnh hưởng tới hoạt động của port khác. 
 
 <img src=http://i.imgur.com/OdDsURo.png>
@@ -153,9 +157,13 @@ Port tương ứng với các topo
 Fibre Channel không theo OSI mà được phân chia thành 5 Layer
 
 **FC-4**: Protocol-mapping layer, trong đó giao thức SCSI, IP được đóng gói vào IU gửi tới FC-2.
+
 **FC-3**: Common services layer, thực hiện mã hóa, RAID, kết nối multiport.
+
 **FC-2**: Signaling Protocol, được xác định bởi Fibre Channel Framing và chuẩn Signaling 4 (FC-FS-4), bao gồm các giao thức FC mức thấp, kết nối các Port.
+
 **FC-1**: Transmission Protocol, thực hiện mã hóa đường tín hiệu.
+
 **FC-0**: PHY, các cáp kết nối.
 
 <img src=http://i.imgur.com/3dJupOO.png>
@@ -213,6 +221,7 @@ Tham khảo:
 [9]- https://www.techopedia.com/definition/1081/fiber-channel-storage-area-network-fc-san
 
 [10]- https://ferhatakgun.com/network-share-performance-differences-between-nfs-smb/
+
 
 
 
