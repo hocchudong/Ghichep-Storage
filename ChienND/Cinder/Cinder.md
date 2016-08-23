@@ -10,7 +10,21 @@ Mục lục:
 <a name="1"></a>
 ###1. Giới thiệu
 
-	Block Storage service cung cấp các khối lưu trữ cho các instances. Có thể thêm các images vào 1 Block Storage device để boot lên instance.
+	Block Storage service cung cấp các khối lưu trữ(volume) cho các Virtual machines chạy trên Nova compute . Có thể thêm các images vào 1 Block Storage device để boot lên instance.
+
+	Người dùng có thể format các khối lưu trữ như một file system, mount, read/write ...
+
+	Tính năng:
+	
+<img src=http://i.imgur.com/TniYt4U.png>
+
+Với Cinder, ta có thể quản lý data trên các VM dễ dàng hơn
+
+<img src=http://i.imgur.com/ss2m7FP.png>
+
+Cinder Plugin
+
+<img src=http://i.imgur.com/PzAxrLI.png>
 
 Cinder System Architecture
 
@@ -106,7 +120,7 @@ Tham khảo:
 
 [3]- http://docs.openstack.org/admin-guide/blockstorage-manage-volumes.html
 
-
+[4]- https://events.linuxfoundation.org/sites/events/files/slides/CloudOpenJapan2014-Kimura_0.pdf
 
 
 
