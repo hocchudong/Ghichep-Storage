@@ -1,4 +1,4 @@
-#Ceph Internals
+#Ceph Storage Cluster
 
 Mục lục:
 
@@ -10,7 +10,11 @@ Mục lục:
 
 [4. Ceph pools](#4)
 
-[5. Ceph data management](#5)
+[5. ERASURE CODE](#5)
+
+[6. CACHE TIERING](#6)
+
+[7. Ceph data management](#7)
 
 ====================
 
@@ -73,7 +77,9 @@ Khi một host hoặc disk mới đc thêm vào Ceph cluster. CRUSH bắt đầu
 
 **Editing a CRUSH map**
 
-Khi triển khai Ceph với Ceph-deploy, nó tạo ra một CRUSH map mặc định. Ta có thể cấu hình lại CRUSH map theo mô hình mong muốn. 
+Khi triển khai Ceph với Ceph-deploy, nó tạo ra một CRUSH map mặc định. CRUSH map chứa danh sách các OSD, các thành phần vật lý và các rule.
+
+Ta có thể cấu hình lại CRUSH map theo mô hình mong muốn. 
 
 1. Extract your existing CRUSH map. With -o, Ceph will output a compiled
 CRUSH map to the file you specify:
@@ -96,6 +102,9 @@ map to the file specified by -o:
 5. Set the new CRUSH map into the Ceph cluster:
 
 `# ceph osd setcrushmap -i crushmap-compiled`
+
+
+
 
 **Customizing a cluster layout**
 
@@ -134,6 +143,12 @@ Khi Ceph cluster nhận các requests data, nó tách thành các sections place
 
 Khuyến cáo 50 to 100 placement groups trên mỗi OSD. 
 
+Less than 5 OSDs set pg_num to 128
+
+Between 5 and 10 OSDs set pg_num to 512
+
+Between 10 and 50 OSDs set pg_num to 1024
+
 **Calculating PG numbers**
 
 PG trên một cluster. 
@@ -145,17 +160,67 @@ cluster has 160 OSDs and the replication count is 3, the total number of placeme
 groups will come as 5333.3, and rounding up this value to the nearest power of 2
 will give the final value as 8192 PGs.
 
+http://docs.ceph.com/docs/master/rados/operations/placement-groups/
+
+
+
+
 <a name="4"></a>
 ###4. Ceph pools
 
 Ceph pool là một phân vùng lưu trữ objects. Ceph pool giữ một số PG và đc phân phối trên các cluster. Pool đảm bảo dữ liệu bằng cách tạo một số object copies, đó là các bản replicate hoặc erasure codes. Khi tạo pool, ta có thể tùy chọn replica size. Mặc định là 2.
 
-Tính năng **erasure coding (EC)** đc thêm vào bản Ceph Firefly release, data đc chia thành các mảng sau đó mã hóa và phân phối lưu trữ. 
+Pool cung cấp cùng với tùy chọn:
+<ul>
+<li>Resilience: Có thể tùy chọn số lượng OSD cho phép lỗi mà ko làm mất data. Với replicated pools ta có tỉ lệ copies/replicas của một object. Với erasure coded pools thì tỉ lệ là khối mã hóa ví dụ  m=2 in the erasure code profile.
+<li>Placement Groups: Bạn có thể tùy chọn số PG cho pool.
+<li>CRUSH Rules: Khi lưu data xuống pool CRUSH Rules ánh xạ tới các pool CRUSH để xác định các luật cho PG của object và  bản replicate của nó. Có thể tạo các CRUSH rule cho pool.
+<li>Snapshots
+<li>Set Ownership: Có thể cấu hình quyền sở hữu cho pool.
+</ul>
 
-Một Ceph pool đc map với CRUSH ruleset khi data đc ghi vào pool. Nó đc định danh bởi Ceph ruleset cho placement của objects. Ceph pool hỗ trợ snapshot, set ownership, access object. 
+###5. ERASURE CODE
 
-<a name="5"></a>
-###5. Ceph data management
+ERASURE CODE pool là một loại thay cho pool replica nhằm tiết kiệm không gian.
+
+Ví dụ:
+`ceph osd pool create ecpool 12 12 erasurepool 'ecpool' created`
+
+Nó giống với RAID5 và cần 3 hosts. Mặc định các erasure code profile duy trì cho 1 OSD và chỉ cần 1.5TB thay vì 2TB để lưu 1TB data. Các erasure code profile ko thể sửa đổi sau khi đc tạo.
+
+<img src=http://i.imgur.com/h2594LV.png>
+
+Các thông số quan trọng k, m, ruleset-failure-domain nó xác định chi phí lưu trữ và độ bền dữ liệu.
+
+ví dụ:
+```sh
+$ ceph osd erasure-code-profile set myprofile \
+   k=3 \
+   m=2 \
+   ruleset-failure-domain=rack
+```
+
+Các object sẽ đc chia làm 3 và m xác định bao nhiêu OSD có thể hỏng cùng lúc mà ko mất dữ liệu. Số OSD dùng là m+k.
+
+<a name="6"></a>
+###6. CACHE TIERING
+
+Cache tier cung cấp I/O tốt hơn với việc tối ưu các lớp data đc lưu ở backing storage tier. Cache đc sắp xếp với nhau để tạo thành một pool với các storage device có tốc độ nhanh ví dụ SSD. Chúng đc cấu hình tạo thành `cache tier` và `backing pool` cho erasure-coded. Ceph objecter handles nơi chứa Objects và tiering agent xác định khi chuyển Objects từ cache sang backing storage tier, quá trình này trong suốt với người dùng. 
+
+<img src=http://i.imgur.com/4txRkbR.png>
+
+Cache tiering agent tiến hành migration data giữa cache tier and the backing storage tier tự động. 
+
+2 chế độ migration
+
+- Writeback Mode: Ceph client ghi data lên cache tier và nhận ACK từ cache tier. Lúc này, data đang đc ghi vào cache tier migrates tới storage tier. Cache tier đc đặt trước backing storage tier. Khi Ceph client cần data ở storage tier, cache tiering agent migrates the data to the cache tier. Sau đó nó chuyển tới Ceph client với I/O tối ưu. 
+
+- Read-proxy Mode: Chế độ này sẽ dùng các Objects đang có trong cache tier, nếu Objects ko có trong cache thì sẽ chuyển yêu cầu xuống bên dưới.
+
+http://docs.ceph.com/docs/master/rados/operations/cache-tiering/
+
+<a name="7"></a>
+###7. Ceph data management
 
 <img src=http://i.imgur.com/29nO9V3.png>
 
@@ -173,6 +238,7 @@ osd.3 is the tertiary OSD.
 
 <img src=http://i.imgur.com/MR4JqL9.png>
 
+Tham khảo:
 
-
+[1]- http://docs.ceph.com/docs/master/rados/
 
