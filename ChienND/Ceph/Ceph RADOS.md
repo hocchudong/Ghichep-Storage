@@ -10,7 +10,7 @@ Mục Lục:
 
 [1.3. Ceph Disk](#1.3)
 
-[2. Ceph Monitor (MON)]#2)
+[2. Ceph Monitor (MON)](#2)
 
 ==========================
 
