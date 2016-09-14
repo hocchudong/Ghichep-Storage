@@ -40,6 +40,7 @@ Tham khảo:
 
 [2]- https://drive.google.com/file/d/0B3maQ7zepTSLRmtScUd5YnUtczA/view?usp=sharing
 
+[3]- http://www.ssrc.ucsc.edu/Papers/weil-osdi06.pdf
 
 
 
