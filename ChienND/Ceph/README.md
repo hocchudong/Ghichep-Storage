@@ -32,6 +32,7 @@ Mô hình mạng:
 
 [2.Khái niệm trong Ceph Cluster](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20Storage%20Cluster.md)
 
+[3. WorkFlow](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/WorkFlow.md)
 
 Tham khảo:
 
