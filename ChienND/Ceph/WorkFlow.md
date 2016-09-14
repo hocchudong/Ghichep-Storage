@@ -8,4 +8,4 @@ Ceph định danh người dùng thông qua `Cephx`
 
 **Write data**
 
-<img src=http://i.imgur.com/9xHP2UD.png>
+<img src=http://i.imgur.com/scUUJiW.png>
