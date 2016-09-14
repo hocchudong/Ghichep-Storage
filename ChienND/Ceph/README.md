@@ -24,13 +24,13 @@ Mô hình mạng:
 
 <img src=http://i.imgur.com/8peefH6.png>
 
-1. [Thành phần]()
+[1. Thành phần:]()
 
 - [Ceph RADOS](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20RADOS.md)
 
 - [Librados](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Librados.md)
 
-2. [Khái niệm trong Ceph Cluster](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20Storage%20Cluster.md)
+[2.Khái niệm trong Ceph Cluster](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20Storage%20Cluster.md)
 
 
 Tham khảo:
