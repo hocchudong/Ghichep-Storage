@@ -13,9 +13,12 @@ Mục lục:
 [4. CACHE SETTINGS](#4)
 
 [5. Block Devices and OpenStack](#5)
+
 ====================
 
-Ceph Block Device (RBD) là một chuỗi các byte. Nó là thin-provisioned, resizable và data đc lưu trên nhiều OSDs. RBD tương tác với OSD thông qua kernel modules hoặc librbd library.. RBD có tính năng snapshot, nhân bản, nhất quán. RBD cung cấp hiệu suất cao với khả năng mở rộng 
+Ceph Block Device (RBD) cung cấp giải pháp cho ảo hóa, hỗ trợ QEMU/KVM.  RBD tương tác với OSD thông qua `kernel modules` hoặc `librbd library`... RBD có tính năng thin provisioning, copy-on-write snapshots , clones, revertible read-only snapshots, cloud platforms OpenStack và CloudStack. RBD cung cấp hiệu suất cao với khả năng mở rộng 
+
+RBD sử dụng librbd library để tận dụng các tinh năng của RADOS và cung cấp khả năng lưu trữ đáng tin cậy, lưu trữ block dựa trên các objects. Khi client ghi data vào RDB, librbd library kết nối data block vào objects rồi lưu trong Ceph cluster, chia data vào các objects sau đó replicate trong cluster. 
 
 Note: Kernel modules can use Linux page caching. For librbd-based applications, Ceph supports RBD Caching.
 
@@ -45,10 +48,10 @@ Note: Ceph chỉ hỗ trợ cloning định dạng 2 images ( rbd create --image
 
 Các bản cloned image có tham chiếu tới parent shapshot, bao gồm pool ID, image ID, snapshot ID. Có thể clone snapshot từ pool này sang pool khác. 
 <ul>
-<li>**Image Template**: Sử dụng block device layering để tạo master image và snapshot mẫu phục vụ cho việc clone.
-<li>**Extended Template**: Cung cấp khả năng mở rộng cho image mẫu để cung cấp nhiều thông tin hơn base image. 
-<li>**Tempate Pool**: Sử dụng block device layering để tạo pool chứa master images và snapshot mẫu. 
-<li>**Image Migration/Recovery**: Sử dụng block device layering để migrate or recover data từ pool này sang pool khác.
+<li>Image Template: Sử dụng block device layering để tạo master image và snapshot mẫu phục vụ cho việc clone.
+<li>Extended Template: Cung cấp khả năng mở rộng cho image mẫu để cung cấp nhiều thông tin hơn base image. 
+<li>Tempate Pool: Sử dụng block device layering để tạo pool chứa master images và snapshot mẫu. 
+<li>Image Migration/Recovery: Sử dụng block device layering để migrate or recover data từ pool này sang pool khác.
 </ul> 
 
 <a name="3"></a>
