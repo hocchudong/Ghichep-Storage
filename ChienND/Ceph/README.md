@@ -16,11 +16,15 @@ Công nghệ Ceph:
 	
 <img src=http://i.imgur.com/ih0lt0e.png>
 
+Kiến trúc Ceph:
+
+<img src=http://i.imgur.com/1qQeFnI.png>
+
 Mô hình mạng:
 
 <img src=http://i.imgur.com/8peefH6.png>
 
-[1. Thành phần:]
+[1. Thành phần]
 
 - [Ceph RADOS](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20RADOS.md)
 
