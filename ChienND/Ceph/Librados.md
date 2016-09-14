@@ -4,15 +4,15 @@ Mục lục:
 
 [1. Ceph Block Storage Device](#1)
 
-	- [1.1. Snapshot](#1.1)
+- [1.1. Snapshot](#1.1)
 
-	- [1.2. Layering](#1.2)
+- [1.2. Layering](#1.2)
 
-	- [1.3. RBD Mirroring](#1.3)
+- [1.3. RBD Mirroring](#1.3)
 
-	- [1.4. Cache Settings](#1.4)
+- [1.4. Cache Settings](#1.4)
 
-	- [1.5. Block Devices and OpenStack](#1.5)
+- [1.5. Block Devices and OpenStack](#1.5)
 
 [2. Ceph Object Gateway](#2)
 
