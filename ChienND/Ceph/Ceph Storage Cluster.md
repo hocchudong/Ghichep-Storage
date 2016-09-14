@@ -14,7 +14,9 @@ Mục lục:
 
 [6. Cache Tiering](#6)
 
-[7. Ceph data management](#7)
+[7. Data Striping](#7)
+
+[8. Ceph data management](#8)
 
 ====================
 
@@ -221,7 +223,22 @@ Cache tiering agent tiến hành migration data giữa cache tier and the backin
 http://docs.ceph.com/docs/master/rados/operations/cache-tiering/
 
 <a name="7"></a>
-###7. Ceph data management
+###7. Data Striping
+
+Thiết bị lưu trữ có giới hạn về lưu lượng, nó tác động tới hiệu suất và khả năng tính toán. Vì vậy hệ thống hỗ trợ **Striping** trên nhiều thiết bị để tăng hiệu suất. 
+
+Ceph striping giống như chế độ RAID 0
+
+Ví dụ:
+
+<img src=http://i.imgur.com/UPpWgx3.png>
+
+Trên hình ví dụ có 1 đoạn dữ liệu 123456. 123 được chia cho `Object set` 1. 456 được chia cho `Object set` 2. Các Object set tiếp tục phân chia thành các `Objects` theo số OSD. Sau đấy Striping nhỏ ra `strip unit` lưu trữ lên OSD.
+
+Với tính năng này thay vì xử lý lần lượt từ đầu đến cuối dữ liệu, ta xử lý các đoạn dữ liệu nhỏ cùng 1 lúc. 
+
+<a name="8"></a>
+###8. Ceph data management
 
 <img src=http://i.imgur.com/29nO9V3.png>
 
