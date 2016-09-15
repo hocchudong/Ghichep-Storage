@@ -6,6 +6,8 @@ Ceph Filesystem (Ceph FS) là một [POSIX-compliant filesystem](https://en.wiki
  
 Để dùng Ceph FS ta cần có `Ceph Metadata Server`. 
 
+Libcephfs libraries hỗ trợ các client sử dụng `mount` command. Hỗ trợ CIFS và SMB. 
+
 **Enable the filesystem**
 
 `$ ceph fs new <fs_name> <metadata> <data>`

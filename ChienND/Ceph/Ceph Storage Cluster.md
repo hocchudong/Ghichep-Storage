@@ -10,11 +10,13 @@ Mục lục:
 
 [4. Ceph pools](#4)
 
-[5. ERASURE CODE](#5)
+[5. Erasure Code](#5)
 
-[6. CACHE TIERING](#6)
+[6. Cache Tiering](#6)
 
-[7. Ceph data management](#7)
+[7. Data Striping](#7)
+
+[8. Ceph data management](#8)
 
 ====================
 
@@ -179,9 +181,10 @@ Pool cung cấp cùng với tùy chọn:
 <li>Set Ownership: Có thể cấu hình quyền sở hữu cho pool.
 </ul>
 
-###5. ERASURE CODE
+<a name="5"></a>
+###5. Erasure Code
 
-ERASURE CODE pool là một loại thay cho pool replica nhằm tiết kiệm không gian.
+Erasure Code pool là một loại thay cho pool replica nhằm tiết kiệm không gian.
 
 Ví dụ:
 `ceph osd pool create ecpool 12 12 erasurepool 'ecpool' created`
@@ -203,7 +206,7 @@ $ ceph osd erasure-code-profile set myprofile \
 Các object sẽ đc chia làm 3 và m xác định bao nhiêu OSD có thể hỏng cùng lúc mà ko mất dữ liệu. Số OSD dùng là m+k.
 
 <a name="6"></a>
-###6. CACHE TIERING
+###6. Cache Tiering
 
 Cache tier cung cấp I/O tốt hơn với việc tối ưu các lớp data đc lưu ở backing storage tier. Cache đc sắp xếp với nhau để tạo thành một pool với các storage device có tốc độ nhanh ví dụ SSD. Chúng đc cấu hình tạo thành `cache tier` và `backing pool` cho erasure-coded. Ceph objecter handles nơi chứa Objects và tiering agent xác định khi chuyển Objects từ cache sang backing storage tier, quá trình này trong suốt với người dùng. 
 
@@ -220,7 +223,22 @@ Cache tiering agent tiến hành migration data giữa cache tier and the backin
 http://docs.ceph.com/docs/master/rados/operations/cache-tiering/
 
 <a name="7"></a>
-###7. Ceph data management
+###7. Data Striping
+
+Thiết bị lưu trữ có giới hạn về lưu lượng, nó tác động tới hiệu suất và khả năng tính toán. Vì vậy hệ thống hỗ trợ **Striping** trên nhiều thiết bị để tăng hiệu suất. 
+
+Ceph striping giống như chế độ RAID 0
+
+Ví dụ:
+
+<img src=http://i.imgur.com/UPpWgx3.png>
+
+Trên hình ví dụ có 1 đoạn dữ liệu 123456. 123 được chia cho `Object set` 1. 456 được chia cho `Object set` 2. Các Object set tiếp tục phân chia thành các `Objects` theo số OSD. Sau đấy Striping nhỏ ra `strip unit` lưu trữ lên OSD.
+
+Với tính năng này thay vì xử lý lần lượt từ đầu đến cuối dữ liệu, ta xử lý các đoạn dữ liệu nhỏ cùng 1 lúc. 
+
+<a name="8"></a>
+###8. Ceph data management
 
 <img src=http://i.imgur.com/29nO9V3.png>
 
