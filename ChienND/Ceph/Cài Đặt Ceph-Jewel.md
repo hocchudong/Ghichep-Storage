@@ -1,13 +1,24 @@
 #Install Ceph-Jewel on Ubuntu 14.04
+Mục lục:
 
+[1. Mô hình Lab](#1)
+
+[2. Thiết lập trên Node-I (Mon+Osd)](#2)
+
+[3. Thiết lập trên Note-II (Osd)](#3)
+
+========================
+
+<a name="1"></a>
 ###1. Mô hình Lab
 
-<img src= 
+<img src=http://i.imgur.com/16cTxCs.png>
 
 - Server chạy Ubuntu 14.04
 - Máy có 2 card mạng
 - Có 4 ổ cứng riêng để tạo osd
 
+<a name="2"></a>
 ###2. Thiết lập trên Node-I (Mon+Osd)
 
 **B-1. Sửa file /etc/hosts**
@@ -88,7 +99,10 @@ mon addr = 172.16.69.128
 
 **B-10. Tạo thư mục cho monitor**
 
-`mkdir /var/lib/ceph/mon/ceph-Ceph-1`
+```sh
+mkdir /var/lib/ceph/mon/ceph-Ceph-1
+chown -R ceph:ceph /var/lib/ceph/mon/ceph-Ceph-1
+```
 
 **B-11. Tạo thư mục cho monitor deamon**
 
@@ -102,7 +116,6 @@ mon addr = 172.16.69.128
 service ceph start 
 
 chown -R ceph:ceph /var/run/ceph
-chown -R ceph:ceph /var/lib/ceph/mon/ceph-Ceph-1
 
 service ceph restart
 ```
@@ -142,6 +155,7 @@ service ceph restart
 
 <img src=http://i.imgur.com/JOnEOAz.png>
 
+<a name="3"></a>
 ###3. Thiết lập trên Note-II (Osd)
 
 **B-1. Sửa file /etc/hosts**
@@ -197,7 +211,7 @@ mon addr = 172.16.69.128
 
 `scp /var/lib/ceph/bootstrap-osd/ceph.keyring root@Ceph-2:/var/lib/ceph/bootstrap-osd`
 
-<img src=[Imgur](http://i.imgur.com/YzPXiiO.png>
+<img src=http://i.imgur.com/YzPXiiO.png>
 
 **B-6. Tạo OSD**
 
