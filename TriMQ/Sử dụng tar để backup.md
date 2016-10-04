@@ -12,6 +12,7 @@
 	- [2.1 Tạo archive để lưu trữ tất cả các file cần backup trong 1 thư mục](#2.1)
 	- [2.2 Di chuyển file archive sang 1 server khác](#2.2)
 	- [2.3 Backup Database](#2.3)
+	- [2.4 Incremental Backup](#2.4)
 	
 - [3. Tài liệu tham khảo](#3)
 	
@@ -163,10 +164,66 @@ total 8
 -rw-r--r-- 1 root root 2394 Sep 29 16:38 initial_backup.tar.gz
 -rw-r--r-- 1 root root  130 Sep 29 16:53 initial.sql.gz
 ```
+
+<a name="2.4"></a>
+###2.4 Incremental Backup
+
+- Để tạo Incremental Backup sử dụng lệnh `tar`:
+```sh
+tar --create --file=archive.1.tar --listed-incremental=/var/log/urs.snar-1 -P /home/quoctrimai/
+```
+Là bản backup level 0
+- Trong đó:
+<ul>
+<li><b>file=archive.1.tar</b>: Là Archive được tạo ra</li>
+<li><b>/var/log/urs.snar-1</b>: Là nơi chứa Archive</li>
+<li><b>/home/quoctrimai/</b>: Là thư mục backup</li>
+</ul>
+
+- Để tạo các Incremental backup khác:
+```sh
+tar --create --file=archive.2.tar --listed-incremental=/var/log/urs.snar-2 -P /home/quoctrimai/
+```
+Đây được gọi là bản backup level 1
+
+- Để kiểm chứng Incremental backup tôi sẽ tạo 1 file và backup với `tar`
+```sh
+mkdir /home/quoctrimai/abc.txt
+```
+Sau khi tạo xong sẽ backup thư mục /home/quoctrimai
+```sh
+tar --create --file=archive.3.tar --listed-incremental=/var/log/urs.snar-3 -P /home/quoctrimai/
+```
+
+- Kiểm tra dung lượng của thư mục chứa archive sẽ thấy update của bản backup thay đổi
+```sh
+cd /var/log
+du -ah
+```
+Ta sẽ thấy phần thay đổi
+```sh
+OUTPUT
+4.0K	./urs.snar-2
+4.0K	./urs.snar-3
+```
+- Để có thể backup lại dữ liệu đã thay đổi, phải backup lần lượt từng bản thay đổi:
+Ví dụ có 2 bản thay đổi
+```sh
+tar --extract --listed-incremental=/dev/null --file archive.1.tar -P
+```
+```sh
+tar --extract --listed-incremental=/dev/null --file archive.2.tar -P
+```
+- Để xem thông tin và liệt kê nội dung trong archive:
+```sh
+tar --list --incremental --verbose --verbose --file archive.3.tar
+```
+
 <a name="3"></a>
 ##3. Tài liệu tham khảo
 - http://ntssi.vn/2016/04/tong-quan-ve-full-backup-differential-backup-va-incremental-backup/
 - https://www.digitalocean.com/community/tutorials/how-to-create-an-off-site-backup-of-your-site-with-rsync-on-centos-6
+- http://www.gnu.org/savannah-checkouts/gnu/tar/manual/html_node/Incremental-Dumps.html
 
 
 
