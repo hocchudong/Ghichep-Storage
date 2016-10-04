@@ -39,7 +39,7 @@ apt-get update
 
 **B-3. Cài đặt**
 
-`apt-get install ceph -y`
+`apt-get install ceph ceph-mds -y`
 
 Kiểm tra gói cài đặt
 
@@ -101,7 +101,6 @@ mon addr = 172.16.69.128
 
 ```sh
 mkdir /var/lib/ceph/mon/ceph-Ceph-1
-chown -R ceph:ceph /var/lib/ceph/mon/ceph-Ceph-1
 ```
 
 **B-11. Tạo thư mục cho monitor deamon**
@@ -116,6 +115,7 @@ chown -R ceph:ceph /var/lib/ceph/mon/ceph-Ceph-1
 service ceph start 
 
 chown -R ceph:ceph /var/run/ceph
+chown -R ceph:ceph /var/lib/ceph/mon/ceph-Ceph-1
 
 service ceph restart
 ```
