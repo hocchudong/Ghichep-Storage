@@ -1,10 +1,18 @@
 #Block Ceph with OpenStack
 
+Mục lục:
+
+[A. CONFIGURE CEPH](#A)
+
+[B. CONFIGURE OPENSTACK TO USE CEPH](#B)
+
 <img src=http://i.imgur.com/cSSCBUc.png>
 
-A. CONFIGURE CEPH
+<a name="A"></a>
+###A. CONFIGURE CEPH
 
-1. Create Pool
+**1. Create Pool**
+
 ```sh
 ceph osd pool create volumes 128
 ceph osd pool create images 128
@@ -12,14 +20,16 @@ ceph osd pool create backups 128
 ceph osd pool create vms 128
 ```
 
-2. CONFIGURE OPENSTACK CEPH CLIENTS
+**2. CONFIGURE OPENSTACK CEPH CLIENTS**
 
 - Copy ceph.conf, ceph.client.admin.keyring
 
 - Install
 
+```sh
 apt-get install python-rbd (glance-api)
 apt-get install ceph-common (nova-compute, cinder-backup, cinder-volume)
+```
 
 - SETUP CEPH CLIENT AUTHENTICATION
 
@@ -60,9 +70,10 @@ Secret 457eb676-33da-42ec-9a8c-9293d545c337 created
 sudo virsh secret-set-value --secret 82233076-a949-4884-a957-10191875061f --base64 $(cat client.cinder.key) && rm client.cinder.key secret.xml
 ```
 
-B. CONFIGURE OPENSTACK TO USE CEPH
+<a name="B"></a>
+###B. CONFIGURE OPENSTACK TO USE CEPH
 
-1. Configure Glance
+**1. Configure Glance**
 
 `vim /etc/glance/glance-api.conf`
 
@@ -77,7 +88,7 @@ rbd_store_chunk_size = 8
 default_store = rbd
 ```
 
-2. Configure Cinder
+**2. Configure Cinder**
 
 `vim/etc/cinder/cinder.conf`
 
@@ -111,7 +122,7 @@ rbd_secret_uuid = 82233076-a949-4884-a957-10191875061f
 report_discard_supported = true
 ```
 
-3. Configure Nova
+**3. Configure Nova**
 
 `vim /etc/nova/nova.conf`
 ```sh
@@ -123,7 +134,8 @@ rbd_user = cinder
 rbd_secret_uuid = 82233076-a949-4884-a957-10191875061f
 ```
 
-4. Restart service
+**4. Restart service**
+
 ```sh
 sudo glance-control api restart
 sudo service nova-compute restart
