@@ -3,7 +3,7 @@ Mục lục:
 
 [1. Mô hình Lab](#1)
 
-[2. Thiết lập trên Node-I (Mon+Osd)](#2)
+[2. Thiết lập trên Node-I (Mon+Osd+Mds)](#2)
 
 [3. Thiết lập trên Note-II (Osd)](#3)
 
@@ -12,14 +12,14 @@ Mục lục:
 <a name="1"></a>
 ###1. Mô hình Lab
 
-<img src=http://i.imgur.com/16cTxCs.png>
+<img src=http://i.imgur.com/aLuqAMu.png>
 
 - Server chạy Ubuntu 14.04
 - Máy có 2 card mạng
 - Có 4 ổ cứng riêng để tạo osd
 
 <a name="2"></a>
-###2. Thiết lập trên Node-I (Mon+Osd)
+###2. Thiết lập trên Node-I (Mon+Osd+Mds)
 
 **B-1. Sửa file /etc/hosts**
 
@@ -39,7 +39,7 @@ apt-get update
 
 **B-3. Cài đặt**
 
-`apt-get install ceph ceph-mds -y`
+`apt-get install ceph -y`
 
 Kiểm tra gói cài đặt
 
@@ -77,6 +77,13 @@ mon initial members = Ceph-1
 [mon.Ceph-1]
 host = Ceph-1
 mon addr = 172.16.69.128
+
+[mds]
+mds data = /var/lib/ceph/mds/mds.Ceph-1
+keyring = /var/lib/ceph/mds/mds.Ceph-1/mds.Ceph-1.keyring
+
+[mds.Ceph-1]
+host = Ceph-1
 ```
 
 **B-6. Tạo Keyring và monitor secret key**
@@ -97,19 +104,17 @@ mon addr = 172.16.69.128
 
 <img src=http://i.imgur.com/ECeA7Ay.png>
 
-**B-10. Tạo thư mục cho monitor**
+**B-10. Tạo thư mục cho ceph-mon deamon**
 
 ```sh
 mkdir /var/lib/ceph/mon/ceph-Ceph-1
-```
-
-**B-11. Tạo thư mục cho monitor deamon**
 
 `ceph-mon --mkfs -i Ceph-1 --monmap /tmp/monmap --keyring /tmp/ceph.mon.keyring`
+```
 
 <img src=http://i.imgur.com/4Fr6cTT.png>
 
-**B-12. Khởi động dịch vụ, phân quyền thư mục**
+**B-11. Khởi động dịch vụ, phân quyền thư mục**
 
 ```sh
 service ceph start 
@@ -118,6 +123,13 @@ chown -R ceph:ceph /var/run/ceph
 chown -R ceph:ceph /var/lib/ceph/mon/ceph-Ceph-1
 
 service ceph restart
+```
+
+**B-12. Tạo thư mục cho ceph-mds deamon, xác thực với cephX**
+
+```sh
+mkdir /var/lib/ceph/mds/mds.Ceph-1
+ceph auth get-or-create mds.Ceph-1 mds 'allow ' osd 'allow *' mon 'allow rwx' > /var/lib/ceph/mds/mds.Ceph-1/mds.Ceph-1.keyring
 ```
 
 - Check ceph
@@ -154,6 +166,25 @@ service ceph restart
 - Check OSD
 
 <img src=http://i.imgur.com/JOnEOAz.png>
+
+**B-14. Tạo Ceph Filesystem**
+
+- Create FileSystem Pool
+
+```sh
+ceph osd pool create cephfs_data <pg_num>
+ceph osd pool create cephfs_metadata <pg_num>
+```
+
+- Create FileSystem
+```sh
+ceph fs new <fs_name> <metadata> <data>
+ceph fs ls
+```
+
+- Check mds
+
+<im src=http://i.imgur.com/Wq0NSj2.png>
 
 <a name="3"></a>
 ###3. Thiết lập trên Note-II (Osd)
@@ -239,4 +270,10 @@ mon addr = 172.16.69.128
 
 <img src=http://i.imgur.com/IciLdGp.png>
 
+Tham khảo:
 
+[1]- http://www.upforfree.com/dl3.php?name=Learning-Ceph%5Bebooksfeed.com%5D.pdf&size=19.00&n=ebooks
+
+[2]- https://www.sebastien-han.fr/blog/2013/05/13/deploy-a-ceph-mds-server/ 
+
+[3]- http://docs.ceph.com/docs/master/install/
