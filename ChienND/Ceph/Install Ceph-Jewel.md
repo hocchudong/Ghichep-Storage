@@ -12,7 +12,7 @@ Mục lục:
 <a name="1"></a>
 ###1. Mô hình Lab
 
-<img src=http://i.imgur.com/16cTxCs.png>
+<img src=http://i.imgur.com/aLuqAMu.png>
 
 - Server chạy Ubuntu 14.04
 - Máy có 2 card mạng
@@ -39,7 +39,7 @@ apt-get update
 
 **B-3. Cài đặt**
 
-`apt-get install ceph ceph-mds -y`
+`apt-get install ceph -y`
 
 Kiểm tra gói cài đặt
 
@@ -270,4 +270,10 @@ mon addr = 172.16.69.128
 
 <img src=http://i.imgur.com/IciLdGp.png>
 
+Tham khảo:
 
+[1]- http://www.upforfree.com/dl3.php?name=Learning-Ceph%5Bebooksfeed.com%5D.pdf&size=19.00&n=ebooks
+
+[2]- https://www.sebastien-han.fr/blog/2013/05/13/deploy-a-ceph-mds-server/ 
+
+[3]- http://docs.ceph.com/docs/master/install/
