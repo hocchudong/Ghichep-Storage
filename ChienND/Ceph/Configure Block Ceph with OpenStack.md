@@ -20,16 +20,16 @@ ceph osd pool create backups 128
 ceph osd pool create vms 128
 ```
 
-**2. CONFIGURE OPENSTACK CEPH CLIENTS**
+**2. CONFIGURE OPENSTACK**
 
-- Copy ceph.conf, ceph.client.admin.keyring
-
-- Install
+- Install:
 
 ```sh
-apt-get install python-rbd (glance-api)
-apt-get install ceph-common (nova-compute, cinder-backup, cinder-volume)
+apt-get install python-rbd (Cho glance-api)
+apt-get install ceph-common (Cho nova-compute, cinder-backup, cinder-volume)
 ```
+
+- Copy `ceph.conf, ceph.client.admin.keyring` từ Ceph sang OpenStack.
 
 - SETUP CEPH CLIENT AUTHENTICATION
 
@@ -51,12 +51,12 @@ chown cinder:cinder /etc/ceph/ceph.client.cinder-backup.keyring
 `ceph auth get-key client.cinder | tee client.cinder.key`
 ```sh
 uuidgen
-82233076-a949-4884-a957-10191875061f
+212ba33a-5734-47af-8da4-84b3d39e03dc
 ```
 ```sh
 cat > secret.xml <<EOF
 <secret ephemeral='no' private='no'>
-  <uuid>457eb676-33da-42ec-9a8c-9293d545c337</uuid>
+  <uuid>212ba33a-5734-47af-8da4-84b3d39e03dc</uuid>
   <usage type='ceph'>
     <name>client.cinder secret</name>
   </usage>
@@ -66,8 +66,8 @@ EOF
 
 ```sh
 sudo virsh secret-define --file secret.xml
-Secret 457eb676-33da-42ec-9a8c-9293d545c337 created
-sudo virsh secret-set-value --secret 82233076-a949-4884-a957-10191875061f --base64 $(cat client.cinder.key) && rm client.cinder.key secret.xml
+
+sudo virsh secret-set-value --secret 212ba33a-5734-47af-8da4-84b3d39e03dc --base64 $(cat client.cinder.key) && rm client.cinder.key secret.xml
 ```
 
 <a name="B"></a>
@@ -80,6 +80,7 @@ sudo virsh secret-set-value --secret 82233076-a949-4884-a957-10191875061f --base
 ```sh
 [glance_store]
 
+show_image_direct_url = True
 stores = rbd
 rbd_store_pool = images
 rbd_store_user = glance
@@ -90,7 +91,7 @@ default_store = rbd
 
 **2. Configure Cinder**
 
-`vim/etc/cinder/cinder.conf`
+`vim /etc/cinder/cinder.conf`
 
 ```sh
 [DEFAULT]
@@ -118,20 +119,21 @@ rados_connect_timeout = -1
 glance_api_version = 2
 
 rbd_user=cinder
-rbd_secret_uuid = 82233076-a949-4884-a957-10191875061f
+rbd_secret_uuid = 212ba33a-5734-47af-8da4-84b3d39e03dc
 report_discard_supported = true
 ```
 
 **3. Configure Nova**
 
 `vim /etc/nova/nova.conf`
+
 ```sh
 [libvirt]
 images_type = rbd
 images_rbd_pool = vms
 images_rbd_ceph_conf = /etc/ceph/ceph.conf
 rbd_user = cinder
-rbd_secret_uuid = 82233076-a949-4884-a957-10191875061f
+rbd_secret_uuid = 212ba33a-5734-47af-8da4-84b3d39e03dc
 ```
 
 **4. Restart service**
@@ -142,6 +144,7 @@ sudo service nova-compute restart
 sudo service cinder-volume restart
 sudo service cinder-backup restart
 ```
+
 
 
 
