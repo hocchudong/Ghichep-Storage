@@ -19,6 +19,8 @@ Mục lục:
 - Máy có 2 card mạng
 - Có 4 ổ cứng riêng để tạo osd
 
+Chú ý: Số Node (Mon+Osd) nên cấu hình là 3 node để số lượng Object đc replicate đúng. Có thể cấu hình 1 node, dùng bình thường nhưng check ceph status sẽ báo pgs degrate.
+
 **THỰC HIỆN TRÊN CÁC SERVER CEPH**
 
 **B-1. Sửa file /etc/hosts**
@@ -217,7 +219,7 @@ root@Ceph-1:/etc/ceph# scp /var/lib/ceph/bootstrap-osd/ceph.keyring root@Ceph-2:
 <img src=http://i.imgur.com/IciLdGp.png>
 
 <a name="4"></a>
-4. Cấu hình Node-III (Mon+Osd)
+###4. Cấu hình Node-III (Mon+Osd)
 
 **B-1. Copy từ Note-I sang Node-III***
 ```sh
