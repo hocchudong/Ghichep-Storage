@@ -6,7 +6,7 @@ Mục lục:
 
 [B. CONFIGURE OPENSTACK TO USE CEPH](#B)
 
-[C. Test backend](#C)
+[C. TEST BACKEND](#C)
 
 <img src=http://i.imgur.com/cSSCBUc.png>
 
