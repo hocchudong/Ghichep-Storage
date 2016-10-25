@@ -6,6 +6,8 @@ Mục lục:
 
 [B. CONFIGURE OPENSTACK TO USE CEPH](#B)
 
+[C. Test backend](#C)
+
 <img src=http://i.imgur.com/cSSCBUc.png>
 
 <a name="A"></a>
@@ -145,7 +147,10 @@ sudo service cinder-volume restart
 sudo service cinder-backup restart
 ```
 
+<a name="C"></a>
+###C. Test backend
 
+<img src=http://i.imgur.com/6uzig1C.png>
 
 
 
