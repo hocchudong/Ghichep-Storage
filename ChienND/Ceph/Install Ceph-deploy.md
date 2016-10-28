@@ -1,17 +1,29 @@
 #Install Ceph-Deploy
 
+Mục Lục:
+
+[A. Install Ceph-Deploy trên ceph-1 bằng apt-get và triển khai Ceph cluster](#A)
+
+[B. Install Ceph-Deploy bằng Package ...tar.gz](#B)
+
+[C. Install Ceph-Deploy bằng pip hoặc easy_install](#C)
+
 Mô hình Lab
 
 <img src=http://i.imgur.com/ZfijguF.png>
 
 <ul>
-<li>2 node: ceph-1, ceph-2, ceph-3
-<li>2 card mạng: eth0-172.16.69.0/24	eth1-10.10.10.0/24
-<li>2 ổ cứng làm osd lưu trữ
-<li>ceph-1 cài đặt dịch vụ ceph-deploy phục vụ cho việc triển khai cụm ceph.
+<li> 2 node: ceph-1, ceph-2, ceph-3
+<li> 2 card mạng: eth0-172.16.69.0/24	eth1-10.10.10.0/24
+<li> 2 ổ cứng làm osd lưu trữ
+<li> ceph-1 cài đặt dịch vụ ceph-deploy phục vụ cho việc triển khai cụm ceph
 </ul>
 
-###A. Install trên ceph-1
+**Chú ý:** Cài Ceph-Deploy với `pip`, `easy_install` ta sẽ có phiên bản mới nhất, với `apt-get` sẽ có phiên bản giống repo đã thêm vào. 
+
+
+<a name="A"></a>
+###A. Install Ceph-Deploy trên ceph-1 bằng apt-get và triển khai Ceph cluster
 
 - Sửa file hosts trên các node
 
@@ -55,6 +67,14 @@ sudo chmod 440 /etc/sudoers.d/ceph
 ssh-keygen 
 ssh-copy-id ceph-2
 ssh-copy-id ceph-3
+```
+
+- Ad repo Ceph-Jewel
+
+```sh
+wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
+echo deb http://download.ceph.com/debian-jewel/ trusty main | sudo tee /etc/apt/sources.list.d/ceph.list
+apt-get update
 ```
 
 - Cài đặt dịch vụ Ceph-Deploy
@@ -132,6 +152,45 @@ server 3.asia.pool.ntp.org iburst
 
 `service chrony restart`
 
+<a name="B"></a>
+B. Install Ceph-Deploy bằng Package ...tar.gz
+
+- Tải gói cài đặt theo đường link: https://pypi.python.org/pypi/ceph-deploy hoặc dùng lệnh `wget` 
+
+Ví dụ gói cài Ceph-Deploy phiên bản 1.5.36
+
+`wget https://pypi.python.org/packages/23/f0/f144b1b55534a3e10d269dbfbe092e0aaa1c4b826c24f5df9320ae9bdfce/ceph-deploy-1.5.36.tar.gz`
+
+- Giải nén và truy cập vào thư mục vừa giải nén
+
+`tar xvf ceph-deploy-1.5.36.tar.gz`
+
+<img src=http://i.imgur.com/5abWP6D.png>
+
+- Cài đặt Ceph-Deploy
+
+`python setup.py install`
+
+- Các bước cài SSH và triển khai Ceph cluster giống như bước trên mục A
+
+<a name="C"></a>
+###C. Install Ceph-Deploy bằng pip hoặc easy_install
+
+- Cài đặt python-pip`
+
+`apt-get install python-pip cho pip`
+
+- Cài Ceph-Deploy
+
+`pip install ceph-deploy`
+
+- Cài đặt  apt-get install python-setuptools cho easy_install
+
+`apt-get install python-setuptools`
+
+- Cài Ceph-Deploy
+
+`easy_install ceph-deploy`
 
 
 **Chú ý:**
