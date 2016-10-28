@@ -2,16 +2,16 @@
 
 Mục lục:
 
-[A. CONFIGURE CEPH](#A)
+[A. CẤU HÌNH CEPH](#A)
 
-[B. CONFIGURE OPENSTACK TO USE CEPH](#B)
+[B. CẤU HÌNH OPENSTACK VỚI BACKEND CEPH](#B)
 
 [C. TEST BACKEND](#C)
 
 <img src=http://i.imgur.com/cSSCBUc.png>
 
 <a name="A"></a>
-###A. CONFIGURE CEPH
+###A. CẤU HÌNH CEPH
 
 **1. Create Pool**
 
@@ -22,7 +22,7 @@ ceph osd pool create backups 128
 ceph osd pool create vms 128
 ```
 
-**2. CONFIGURE OPENSTACK**
+**2. CÀI ĐẶT SERVICE CHO OPENSTACK**
 
 - Install:
 
@@ -73,7 +73,7 @@ sudo virsh secret-set-value --secret 212ba33a-5734-47af-8da4-84b3d39e03dc --base
 ```
 
 <a name="B"></a>
-###B. CONFIGURE OPENSTACK TO USE CEPH
+###B. CẤU HÌNH OPENSTACK VỚI BACKEND CEPH
 
 **1. Configure Glance**
 
