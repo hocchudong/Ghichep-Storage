@@ -10,6 +10,8 @@ Mục lục:
 
 <img src=http://i.imgur.com/cSSCBUc.png>
 
+**Chú ý:** Phiên bản Ceph trên backend ceph và OpenStack phải giống nhau. 
+
 <a name="A"></a>
 ###A. CẤU HÌNH CEPH
 
@@ -75,7 +77,7 @@ sudo virsh secret-set-value --secret 212ba33a-5734-47af-8da4-84b3d39e03dc --base
 <a name="B"></a>
 ###B. CẤU HÌNH OPENSTACK VỚI BACKEND CEPH
 
-**1. Configure Glance**
+**1. Glance**
 
 `vim /etc/glance/glance-api.conf`
 
@@ -91,7 +93,7 @@ rbd_store_chunk_size = 8
 default_store = rbd
 ```
 
-**2. Configure Cinder**
+**2. Cinder**
 
 `vim /etc/cinder/cinder.conf`
 
@@ -125,7 +127,7 @@ rbd_secret_uuid = 212ba33a-5734-47af-8da4-84b3d39e03dc
 report_discard_supported = true
 ```
 
-**3. Configure Nova**
+**3. Nova**
 
 `vim /etc/nova/nova.conf`
 
