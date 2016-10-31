@@ -29,6 +29,7 @@ Chú ý: Số Node (Mon+Osd) nên cấu hình là 3 node để số lượng Obj
 127.0.0.1	localhost
 172.16.69.128	Ceph-1
 172.16.69.129	Ceph-2
+172.16.69.130	Ceph-3
 ```
 
 **B-2. Tải trusted key và thêm repo**

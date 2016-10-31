@@ -8,6 +8,8 @@ Mục Lục:
 
 [C. Install Ceph-Deploy bằng pip hoặc easy_install](#C)
 
+[D. Mở rộng Ceph cluster](#D)
+
 Mô hình Lab
 
 <img src=http://i.imgur.com/ZfijguF.png>
@@ -28,6 +30,7 @@ Mô hình Lab
 - Sửa file hosts trên các node
 
 vim /etc/hosts
+
 ```sh
 172.16.69.11    ceph-1
 172.16.69.12    ceph-2
@@ -35,7 +38,6 @@ vim /etc/hosts
 ```
 
 - Đặt địa chỉ mạng tương ứng trên các node
-
 
 vim /etc/network/interfaces
 
@@ -192,14 +194,44 @@ Ví dụ gói cài Ceph-Deploy phiên bản 1.5.36
 
 `easy_install ceph-deploy`
 
+<a name="D"></a>
+D. Mở rộng Ceph cluster
+
+**Thêm Node ceph-4 làm Mon và OSD**
+
+- Thêm ceph-4 vào file `/etc/hosts`
+
+- Copy ssh key
+
+`root@ceph-1:~# ssh-copy-id ceph-4`
+
+- Cài đặt ceph lên ceph-4
+
+`root@ceph-1:~# ceph-deploy install ceph-4`
+
+- Copy file ceph
+
+```sh
+root@ceph-1:~# scp ceph.conf root@ceph-4:/etc/ceph
+root@ceph-1:~# scp ceph.client.admin.keyring  root@ceph-4:/etc/ceph
+```
+
+- Tạo osd
+
+`ceph-deploy osd prepare ceph-4:/dev/sdb ceph-4:/dev/sdc`
+
+- Tạo mon
+
+`ceph-deploy mon create ceph-4`
 
 **Chú ý:**
 <ul>
 <li> Dịch vụ mds đã hoạt động nhưng ko dùng đc FileSystem, check command ko có lệnh.
-<li> Ko thể mở rộng cluster với lệnh ceph-deploy. Số node trong cluster ban đầu đã được xác định bằng lệnh `ceph-deploy new ceph-1 ceph-2 ceph-3`. 
+<li> Ko thể thêm node Mon với lệnh ceph-deploy. Số Mon trong cluster ban đầu đã được xác định bằng lệnh `ceph-deploy new ceph-1 ceph-2 ceph-3`. 
 
 <img src=http://i.imgur.com/vIYP36y.jpg>
 
+<li> Có thể dùng ceph-deploy để thêm osd node.
 <li> Dịch vụ mds trên ceph-deploy ký hiệu là **mdsmap** , trên cài đặt từng bước là **fsmap**
 </ul>
 
