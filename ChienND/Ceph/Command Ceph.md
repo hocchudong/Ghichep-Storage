@@ -1,24 +1,30 @@
-MOn status
+#Command
+
+[1. Pool]
+
+[2. RBD]
+
+[5. Replacing a failed disk drive]
+
+[6. Crush map]
+
+
+
+PGs status:
 
 ```sh
 Peering: Các OSD kết nối với nhau để replica dữ liệu, đồng bộ trạng thái của Object, metadata.
 Active: Peering is complete, Ceph makes the PG active. Data in PG is available on primary OSD and replica. 
 Clean: Các OSD peered chính xác, các PG ở đúng vị trí và replica đúng số lần.
-Degraded: Khi OSD down hoặc Object của PG bị lỗi.
+Degraded: Khi OSD down hoặc Object của PG bị lỗi, số replica chưa đúng
 Recovering: 
 Backflling: Khi OSD mới đc thêm vào cluster. Hệ thống sẽ tái cân bằng lưu trữ. 
 Remapped: Khi có sự thay đổi của các PG.
 State: Khi primary OSD ko báo về trạng thái của nó. 
 ```
-Command:
-```sh
-ceph pg stat
-ceph -s 
-ceph osd tree
-ceph osd dump
-```
 
-1. Pool
+
+###1. Pool
 
 - List pool
 ```sh
@@ -33,10 +39,31 @@ ceph osd pool create {pool-name} {pg-num} [{pgp-num}] [replicated] \
 ceph osd pool create {pool-name} {pg-num}  {pgp-num}   erasure \
      [erasure-code-profile] [crush-ruleset-name] [expected_num_objects]
 ```
+
+- Rename poll
+
+`ceph osd pool rename {current-pool-name} {new-pool-name}`
+
+- Set number of replica
+
+`ceph osd pool set {poolname} size {num-replicas}`
+
+- Get replica
+
+`ceph osd dump | grep 'replicated size'`
+
 - Set quotas
+
 `ceph osd pool set-quota {pool-name} [max_objects {obj-count}] [max_bytes {bytes}]`
 
-2. RBD
+- Snapshot pool
+```sh
+ceph osd pool mksnap <pool-name> <snap>
+ceph osd pool rmsnap <pool-name> <snap>
+```
+
+
+####2. RBD
 
 - Create rbd
 ```sh
@@ -68,6 +95,7 @@ rbd rm {pool-name}/{image-name}
 `check - modprobe rbd`
 
 vim /etc/ceph/ceph.conf
+
 ```sh
 [global]
 rbd_default_features = 3
@@ -92,10 +120,14 @@ rbd map {pool-name}/{image-name}
 rbd snap create,rm,rollback {pool-name}/{image-name}@{snap-name}
 rbd snap ls {pool-name}/{image-name}
 ```
+
+- Delete all sanpshot
+
+`rbd snap purge {pool-name}/{image-name}`
+
 - CLONE RBD 
 
 Create snapshot
-
 
 Protect snapshot: `rbd snap protect {image-name}@{snap-name}`
 
@@ -105,7 +137,7 @@ make clone independent partent
 
 `# rbd flatten`
 
-3. QEMU AND BLOCK DEVICES
+###3. QEMU AND BLOCK DEVICES
 
 - Create
 
@@ -121,7 +153,8 @@ qemu-img convert -f qcow2 -O raw debian_squeeze.qcow2 rbd:data/squeeze
 qemu -m 1024 -drive format=raw,file=rbd:data/squeeze
 qemu -m 1024 -drive format=rbd,file=rbd:data/squeeze,cache=writeback
 ```
-4. USING LIBVIRT WITH CEPH RBD
+
+###4. USING LIBVIRT WITH CEPH RBD
 ```sh
 ceph osd pool create libvirt-pool 128 128
 ceph auth get-or-create client.libvirt mon 'allow r' osd 'allow class-read object_prefix rbd_children, allow rwx pool=libvirt-pool'
@@ -129,39 +162,52 @@ qemu-img create -f rbd rbd:libvirt-pool/new-libvirt-image 2G
 apt-get install virt-manager (https://help.ubuntu.com/community/KVM/VirtManager)
 virt-manager
 ```
+
 - CREATE VM 
+
 http://docs.ceph.com/docs/master/rbd/libvirt/
 
 
-5. Replacing a failed disk drive
+###5. Replacing a failed disk drive
 
 - MAKE OSD FAILED
 ```sh
+ceph osd out
 ceph osd down osd.0
 ceph osd tree
 ```
 Remove the failed OSD from the CRUSH map:
+
 `ceph osd crush rm osd.0`
+
 Delete Ceph authentication keys for the OSD:
+
 `ceph auth del osd.0`
+
 Remove the OSD from the Ceph cluster
+
 `ceph osd rm osd.0`
 
 
 - REPLAYCING OSD
 
 Before adding the disk to the Ceph cluster, perform disk zap:
+
 `ceph-deploy disk zap ceph-node1:sdb`
+
 Finally, create an OSD on the disk, and Ceph will add it as osd.0:
+
 `ceph-deploy --overwrite-conf osd create ceph-node1:sdb`
 
-6. CRUSH MAP
+###6. CRUSH MAP
+
 ```sh
 ceph osd crush dump
 ceph osd crush rule list
 ceph osd crush rule dump <crush_rule_name>
 ceph osd find 1
 ```
+
 Edit:
 ```sh
 ceph osd getcrushmap -o crushmap_compiled_file
@@ -170,7 +216,20 @@ crushtool -c crushmap_decompiled_file -o newcrushmap
 ceph osd setcrushmap -i newcrushmap
 ```
 
+7. FileSystem
 
+- Create FileSystem Pool
+
+```sh
+ceph osd pool create cephfs_data <pg_num>
+ceph osd pool create cephfs_metadata <pg_num>
+```
+
+- Create FileSystem
+```sh
+ceph fs new <fs_name> <metadata> <data>
+ceph fs ls
+```
 
 
 
