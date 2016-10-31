@@ -19,6 +19,7 @@ Mô hình Lab
 <li> 2 card mạng: eth0-172.16.69.0/24	eth1-10.10.10.0/24
 <li> 2 ổ cứng làm osd lưu trữ
 <li> ceph-1 cài đặt dịch vụ ceph-deploy phục vụ cho việc triển khai cụm ceph
+<li> Chạy lệnh `apt-get update` trên các node trước khi cài
 </ul>
 
 **Chú ý:** Cài Ceph-Deploy với `pip`, `easy_install` ta sẽ có phiên bản mới nhất, với `apt-get` sẽ có phiên bản giống repo đã thêm vào. 
@@ -74,6 +75,7 @@ ssh-copy-id ceph-3
 - Ad repo Ceph-Jewel
 
 ```sh
+
 wget -q -O- 'https://download.ceph.com/keys/release.asc' | sudo apt-key add -
 echo deb http://download.ceph.com/debian-jewel/ trusty main | sudo tee /etc/apt/sources.list.d/ceph.list
 apt-get update
@@ -81,7 +83,7 @@ apt-get update
 
 - Cài đặt dịch vụ Ceph-Deploy
 
-`sudo apt-get -y install ceph-deploy ceph-common ceph-mds`
+`apt-get -y install ceph-deploy ceph-common ceph-mds`
 
 - Vào thư mục Ceph-Deploy
 
@@ -173,14 +175,14 @@ Ví dụ gói cài Ceph-Deploy phiên bản 1.5.36
 
 `python setup.py install`
 
-- Các bước cài SSH và triển khai Ceph cluster giống như bước trên mục A
+- Các bước cài SSH và triển khai Ceph cluster giống như các bước trên mục A
 
 <a name="C"></a>
 ###C. Install Ceph-Deploy bằng pip hoặc easy_install
 
 - Cài đặt python-pip`
 
-`apt-get install python-pip cho pip`
+`apt-get install python-pip`
 
 - Cài Ceph-Deploy
 
@@ -195,7 +197,7 @@ Ví dụ gói cài Ceph-Deploy phiên bản 1.5.36
 `easy_install ceph-deploy`
 
 <a name="D"></a>
-D. Mở rộng Ceph cluster
+###D. Mở rộng Ceph cluster
 
 **Thêm Node ceph-4 làm Mon và OSD**
 
@@ -205,34 +207,21 @@ D. Mở rộng Ceph cluster
 
 `root@ceph-1:~# ssh-copy-id ceph-4`
 
+- Thêm mon ceph-4 vào file ceph.conf
+
 - Cài đặt ceph lên ceph-4
 
 `root@ceph-1:~# ceph-deploy install ceph-4`
 
-- Copy file ceph
-
-```sh
-root@ceph-1:~# scp ceph.conf root@ceph-4:/etc/ceph
-root@ceph-1:~# scp ceph.client.admin.keyring  root@ceph-4:/etc/ceph
-```
+`root@ceph-1:~# ceph-deploy mon create ceph-4`
 
 - Tạo osd
 
-`ceph-deploy osd prepare ceph-4:/dev/sdb ceph-4:/dev/sdc`
-
-- Tạo mon
-
-`ceph-deploy mon create ceph-4`
-
+`root@ceph-1:~# ceph-deploy osd prepare ceph-4:/dev/sdb ceph-4:/dev/sdc`
 
 **Chú ý:**
 <ul>
 <li> Dịch vụ mds đã hoạt động nhưng ko dùng đc FileSystem, check command ko có lệnh.
-<li> Ko thể thêm node Mon với lệnh ceph-deploy. Số Mon trong cluster ban đầu đã được xác định bằng lệnh `ceph-deploy new ceph-1 ceph-2 ceph-3`. 
-
-<img src=http://i.imgur.com/vIYP36y.jpg>
-
-<li> Có thể dùng ceph-deploy để thêm osd node.
 <li> Dịch vụ mds trên ceph-deploy ký hiệu là **mdsmap** , trên cài đặt từng bước là **fsmap**
 </ul>
 
