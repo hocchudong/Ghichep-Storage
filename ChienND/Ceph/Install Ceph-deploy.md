@@ -175,7 +175,7 @@ Ví dụ gói cài Ceph-Deploy phiên bản 1.5.36
 
 `python setup.py install`
 
-- Các bước cài SSH, thêm keys/release.asc và triển khai Ceph cluster giống như các bước trên mục A
+- Các bước cài SSH và triển khai Ceph cluster giống như các bước trên mục A
 
 <a name="C"></a>
 ###C. Install Ceph-Deploy bằng pip hoặc easy_install
@@ -212,7 +212,6 @@ Ví dụ gói cài Ceph-Deploy phiên bản 1.5.36
 - Cài đặt ceph lên ceph-4
 
 `root@ceph-1:~# ceph-deploy install ceph-4`
-
 
 `root@ceph-1:~# ceph-deploy mon create ceph-4`
 
