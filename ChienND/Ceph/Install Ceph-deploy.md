@@ -224,6 +224,7 @@ root@ceph-1:~# scp ceph.client.admin.keyring  root@ceph-4:/etc/ceph
 
 `ceph-deploy mon create ceph-4`
 
+
 **Chú ý:**
 <ul>
 <li> Dịch vụ mds đã hoạt động nhưng ko dùng đc FileSystem, check command ko có lệnh.
