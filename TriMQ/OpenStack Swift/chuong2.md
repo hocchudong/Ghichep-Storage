@@ -28,9 +28,9 @@ Chương này giới thiệu về những chức năng chính và lợi ích c�
 Swift được thiết kế để lưu trữ 1 lượng lớn dữ liệu unstructured data (như là documents, web content, backups, images, and virtual machine snapshots) với giá thành rẻ, được sử dụng bởi các công ty, tổ chức, các nhà cung cấp dịch vụ, các tổ chức nghiên cứu trên toàn thế giới. 
 Được phát triển từ năm 2010 phục vụ cho RackSpace Cloud Files, sử dụng mã nguồn mở và là 1 project trong Openstack
 
- Swift không được phát triển như những cách lưu trữ truyền thống như block, file, nó sẽ tương tác với metadata trong container thông qua RESTful HTTP API. 
- Các developer có thể viết trực tiếp tới Swift API hoặc các ngôn ngữ lập trình phổ biến khác
- 
+Swift không được phát triển như những cách lưu trữ truyền thống như block, file, nó sẽ tương tác với metadata trong container thông qua RESTful HTTP API. 
+Các developer có thể viết trực tiếp tới Swift API hoặc các ngôn ngữ lập trình phổ biến khác
+
  
 <a name="12"></a>
 ###1.2 Những đặc tính chính của Swift:
@@ -180,7 +180,7 @@ Những phương thức truy cập, SwiftStack bao gồm 1 số Web UI cho user 
 - Coexist: cùng tồn tại 
 - Standard replica model: mô hình bản sao dữ liệu tiêu chuẩn 
 
-####Phần 2:
+#### Phần 2:
 - integrating: tích hợp
 - heavily upstream
 - major initiatives: sáng kiến lớn
