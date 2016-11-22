@@ -1,0 +1,1 @@
+Lưu tài liệu về OpenStack Swift
