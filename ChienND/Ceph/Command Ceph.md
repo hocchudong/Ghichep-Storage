@@ -137,6 +137,13 @@ make clone independent partent
 
 `# rbd flatten`
 
+- Put object vào pool
+
+```sh
+rados -p sata put sata.pool.object sata.pool
+ceph osd map sata sata.pool.object
+```
+
 ###3. QEMU AND BLOCK DEVICES
 
 - Create
