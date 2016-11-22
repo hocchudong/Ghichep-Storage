@@ -26,13 +26,13 @@ Mô hình mạng:
 
 [1. Thành phần:]()
 
-- [Ceph RADOS](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20RADOS.md)
+- [Ceph RADOS](https://github.com/hocchudong/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20RADOS.md)
 
-- [Librados](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Librados.md)
+- [Librados](https://github.com/hocchudong/Ghichep-Storage/blob/master/ChienND/Ceph/Librados.md)
 
-[2.Khái niệm trong Ceph Cluster](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20Storage%20Cluster.md)
+[2.Khái niệm trong Ceph Cluster](https://github.com/hocchudong/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20Storage%20Cluster.md)
 
-[3. WorkFlow](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/WorkFlow.md)
+[3. WorkFlow](https://github.com/hocchudong/Ghichep-Storage/blob/master/ChienND/Ceph/WorkFlow.md)
 
 Tham khảo:
 
