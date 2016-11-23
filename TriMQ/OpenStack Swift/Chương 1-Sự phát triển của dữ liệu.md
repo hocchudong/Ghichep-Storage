@@ -4,7 +4,7 @@
 **Table of Content**
 
 - [1. Nhu cầu lưu trữ hiện nay](#1)
-  	- [1.1 Sự tăng trưởng của dữ liệu: Exabytes, Hellabytes, and Beyond](#11)
+	- [1.1 Sự tăng trưởng của dữ liệu: Exabytes, Hellabytes, and Beyond](#11)
 	- [1.2 Yêu cầu của việc lưu trữ Unstructured data](#12)
 - [2. No One-Size-Fits-All Storage System](#2)
 - [3. So sánh Object storage với những loại lưu trữ khác](#3)
