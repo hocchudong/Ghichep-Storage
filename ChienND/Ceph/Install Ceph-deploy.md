@@ -14,13 +14,17 @@ Mô hình Lab
 
 <img src=http://i.imgur.com/ZfijguF.png>
 
-<ul>
-<li> 2 node: ceph-1, ceph-2, ceph-3
-<li> 2 card mạng: eth0-172.16.69.0/24	eth1-10.10.10.0/24
-<li> 2 ổ cứng làm osd lưu trữ
-<li> ceph-1 cài đặt dịch vụ ceph-deploy phục vụ cho việc triển khai cụm ceph
-<li> Chạy lệnh `apt-get update` trên các node trước khi cài
-</ul>
+
+- 3 node: ceph-1, ceph-2, ceph-3
+- 2 card mạng: 
+
+	- eth0: `172.16.69.0/24`
+ 	- eth1: `10.10.10.0/24`
+
+- 2 ổ cứng làm osd lưu trữ
+- ceph-1 cài đặt dịch vụ ceph-deploy phục vụ cho việc triển khai cụm ceph
+- Chạy lệnh `apt-get update` trên các node trước khi cài
+
 
 **Chú ý:** Cài Ceph-Deploy với `pip`, `easy_install` ta sẽ có phiên bản mới nhất, với `apt-get` sẽ có phiên bản giống repo đã thêm vào. 
 
