@@ -219,7 +219,7 @@ ceph fs ls
 
 - Khởi động lại ceph và kiểm tra mds thông qua ceph status
 
-<im src=http://i.imgur.com/jIjSmVk.png>
+<img src=http://i.imgur.com/jIjSmVk.png>
 
 <a name="3"></a>
 ###3. Cấu hình Node-II (Mon+Osd)
