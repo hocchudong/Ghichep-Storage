@@ -1,38 +1,22 @@
-#Ceph
+#Các ghi chép về Ceph
 
-Ceph là giải pháp mã nguồn mở để xây dựng hạ tầng lưu trữ phân tán, ổn định, hiệu năng cao. Nền tảng của Ceph là Object từ đó hình thành nên các dạng lưu trữ khối (Block), tệp dữ liệu (File). Định dạng dữ liệu block, file đều đc lưu dưới dạng object trong placement group của Ceph cluster.
+[1. Giới thiệu Ceph](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/1.%20Gi%E1%BB%9Bi%20thi%E1%BB%87u%20Ceph.md)
 
-Tính năng:
-<ul>
-<li>Thay thế lưu trữ trên ổ đĩa server thông thường
-<li>Backup, dự phòng
-<li>Triển khai các dịch vụ High Avaibility như Load Balancing for Web Server, DataBase Replication…
-<li>Giải quyết bài toán lưu trữ cho điện toán đám mây
-<li>Khả năng mở rộng, sử dụng nhiều phần cứng khác nhau
-<li>Ko tồn tại "single point of failure"
-</ul>
+[2. Thành phần:]()
 
-Công nghệ Ceph:
-	
-<img src=http://i.imgur.com/ih0lt0e.png>
+- [Ceph RADOS](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/2.%20Ceph%20RADOS.md)
 
-Kiến trúc Ceph:
+- [Librados](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/3.%20Librados.md)
+ 
+- [FileSystem](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/8.%20Ceph%20FileSystem.md)
 
-<img src=http://i.imgur.com/1qQeFnI.png>
+[3.Khái niệm trong Ceph Cluster](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/4.%20Ceph%20Storage%20Cluster.md)
 
-Mô hình mạng:
+[4. Cài đặt Ceph](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/5.%20C%C3%A0i%20%C4%91%E1%BA%B7t%20Ceph-Jewel.md)
 
-<img src=http://i.imgur.com/8peefH6.png>
+[5. Cài đặt Ceph-Deploy](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/6.%20C%C3%A0i%20%C4%91%E1%BA%B7t%20Ceph-deploy.md)
 
-[1. Thành phần:]()
-
-- [Ceph RADOS](https://github.com/hocchudong/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20RADOS.md)
-
-- [Librados](https://github.com/hocchudong/Ghichep-Storage/blob/master/ChienND/Ceph/Librados.md)
-
-[2.Khái niệm trong Ceph Cluster](https://github.com/hocchudong/Ghichep-Storage/blob/master/ChienND/Ceph/Ceph%20Storage%20Cluster.md)
-
-[3. WorkFlow](https://github.com/hocchudong/Ghichep-Storage/blob/master/ChienND/Ceph/WorkFlow.md)
+[6. Configure Block Ceph with OpendStack](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/7.%20Configure%20Block%20Ceph%20with%20OpenStack.md)
 
 Tham khảo:
 
