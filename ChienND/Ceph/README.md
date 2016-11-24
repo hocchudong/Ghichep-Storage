@@ -34,6 +34,12 @@ Mô hình mạng:
 
 [3. WorkFlow](https://github.com/hocchudong/Ghichep-Storage/blob/master/ChienND/Ceph/WorkFlow.md)
 
+[4. Install Ceph](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Install%20Ceph-Jewel.md)
+
+[5. Install Ceph-Deploy](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Install%20Ceph-deploy.md)
+
+[6. Configure Block Ceph with OpendStack](https://github.com/chiennd/Ghichep-Storage/blob/master/ChienND/Ceph/Configure%20Block%20Ceph%20with%20OpenStack.md)
+
 Tham khảo:
 
 [1]- http://docs.ceph.com/docs/hammer/

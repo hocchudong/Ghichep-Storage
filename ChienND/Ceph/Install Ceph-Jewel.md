@@ -19,6 +19,7 @@ Mục lục:
 - Server chạy Ubuntu 14.04
 - Máy có 2 card mạng
 - Mỗi Server có 3 ổ cứng trống để tạo Osd
+- Các câu lệnh thực hiện với quyền root
 
 Chú ý: Số Node (Mon+Osd) nên cấu hình là 3 node để số lượng Object đc replicate đúng (Replicate mặc định là 3). Có thể cấu hình 1 node, dùng bình thường nhưng check ceph status sẽ báo pgs degrate.
 
