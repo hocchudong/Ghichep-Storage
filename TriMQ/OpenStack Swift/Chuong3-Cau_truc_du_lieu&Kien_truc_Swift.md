@@ -282,6 +282,7 @@ Total drive count Remainder Maps to
 
 <a name="62"></a>
 ### 6.2 Ring Basic: Hàm băm phù hợp
+<img src="http://i.imgur.com/WQILEiu.png">
 - Hàm băm phù hợp giúp cho số lượng object di chuyenr khi thêm hoặc bớt ổ cứng là nhỏ nhất. Thay vì mapping trực tiếp mỗi giá trị cho 1 ổ cứng, sẽ có 1 loạt giá trị liên kết với 1 ổ cứng. Điều này thực hiện bằng cách mapping các giá trị băm có thể xảy ra xung quanh 1 vòng tròn. Mỗi ổ cứng sau đó được gán tới 1 điểm trên vòng tròn dựa vào 1 giá trị băm ổ cứng
 
 - Các phương pháp khác nhau có thể sử dụng (băm IP, băm tên ổ) kết quả là tất cả ổ đĩa được đặt theo 1 trật tự ngẫu nhiên trên vòng tròn
@@ -289,9 +290,10 @@ Total drive count Remainder Maps to
 - Khi object cần được lưu trữ, hàm băm của object được xác định và định vị trên vòng tròn. Hệ thống tìm theo chiều kim đồng hồ để xác định ổ đĩa gần nhất, đây là ổ đĩa gần nhất mà object được đặt
 
 - Với tròng tròn băm, có thể thêm hoặc bớt ổ cứng mà chỉ 1 vài object bị di chuyển. Khi thêm 1 ổ cứng, ổ cứng kế tiếp theo chiều kim đồng hồ sẽ mất đi bất kì object nào ở ổ cũ sang ổ mới, những phần còn lại sẽ được giữ nguyên => hiệu quả hơn việc hầu hết object bị di chuyển
+<img src="http://i.imgur.com/JCfSvgQ.png">
 
 - Thực tế có nhiều điểm được đánh dấu trên vòng tròn cho mỗi ổ đĩa. Hầu hết vòng tròn băm phù hợp sẽ có nhiều điểm được đánh dấu. Có thể là hàng trăm. Có nhiều điểm đánh dấu nghĩa là ổ đĩa được map tới nhiều khoảng giá trị băm nhỏ thay vì 1 cái lớn hơn
-
+<img src="http://i.imgur.com/QTQLFYd.png">
 
 
 
