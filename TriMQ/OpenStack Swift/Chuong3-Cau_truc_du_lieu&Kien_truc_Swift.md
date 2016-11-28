@@ -17,7 +17,12 @@
 	- [4.2 Account layer](#42)
 	- [4.3 Container layer](#43)
 	- [4.4 Object layer](#44)
-- [5. Consistency Processes](#5)
+- [5. Các tiến trình thống nhất](#5)
+	- [5.1 Auditor](#51)
+	- [5.2 Replicator](#52)
+	- [5.3 Account reaper](#53)
+	- [5.4 Container and object updaters](#54)
+	- [5.5 Object expirer](#55)
 - [6. Locating the Data](#6)
 	- [6.1 Ring Basics: Hash Functions](#61)
 	- [6.2 Ring Basics: Consistent Hashing Ring](#62)
@@ -184,7 +189,117 @@ Object storage location là nơi lưu trữ dữ liệu của object đó và me
 - Metadata của 1 object được lưu trong phần thuộc tính mở rộng của tập tin (xattrs), hỗ trợ hầu hết filesystem hiện nay. Nó được thiết kế cho phép dữ liệu object và metadata được lưu trữ cạnh nhau và được sao chép như 1 đơn vị duy nhất
 
 <a name="5"></a>
-## 5. Consistent Process
+## 5. Các tiến trình thống nhất
+- Lưu trữ dữ liệu trên đĩa và cung cấp API không khó, việc khó là quản lý lỗi. Các tiến trình thống nhất (Consistent process) đảm bảo việc tìm và sửa lỗi khi dữ liệu mất mát và phần cứng bị hỏng. Đây là lí do dữ liệu trong Swift bền vững.
+
+- Nhiều tiến trình thống nhất chạy ngầm để đảm bảo tính toàn vẹn và sẵn sàng của dữ liệu. Các tiến trình thống nhất chạy ngầm trên các Storage nodes, tiến trình proxy không liên kết với các tiến trình thống nhất do không phải lưu trữ dữ liệu.
+
+- Đặc trưng của các tiến trình thống nhất là chạy dựa trên các server process như account process, container process, object process.
+<ul>
+<li>Account server process được hỗ trợ bởi các tiến trình thống nhất như account auditor, replicator, reaper</li>
+<li>Container server process được hỗ trợ bởi các thành phần container auditor, container replicator, container updater và container sync</li>
+<li>Object server process hỗ trợ bởi object auditor, object replicator, object updater và object expirer</li>
+</ul>
+
+- Auditor và replicator là 2 tiến trình chính sử dụng cho 3 server process (account, container, object). Updater được thể hiện cho container hoặc object server process. Các thành phần còn lại của tiến trình thống nhất là đặc trưng cho 1 server process
+
+<a name="51"></a>
+### 5.1 Auditor
+- Auditor chạy ngầm trên tất cả các storage nodes
+
+- Nếu account, container, object server chạy trên 1 node thì sẽ có auditor tương ứng
+
+- Account, container, object auditor liên tục quét trên đĩa để đảm bảo dữ liệu không bị hỏng. Nếu có lỗi, auditor chuyển dữ liệu hỏng đó sang khu vực khác
+
+<a name="52"></a>
+- Replicator đảm bảo đủ các bản sao mới nhất của dữ liệu trong cluster. Cho phép cluster ở trong trạng thái nhất quán khi đối mặt với các lỗi như mất mạng, hỏng ổ đĩa
+
+- Các tiến trình account, container, object replicator chạy các dịch vụ tương ứng
+
+- Replicator liên tục kiểm tra với các nodes local của mình và so sánh account, container, object với bản sao trên *remote nodes* trong cluster. Nếu 1 trong các remote nodes bị hỏng hoặc dữ liệu ở đó cũ, replicator sẽ đẩy bản local copy sang để thay thế hoặc update dữ liệu gọi là *replication update*. Lưu ý là replicator chỉ đẩy dữ liệu local tới remote nodes, nó sẽ không lấy bản sao dữ liệu từ remote nodes khi dữ liệu local của nó mất hoặc quá cũ
+
+- Replicator kiểm soát xóa object và container bằng việc tạo ra các *tombstone file* (1 zero-byte file với tên có đuôi .ts) là phiên bản mới nhất của object đó. Replicator sẽ đẩy tombstone file tới các bản sao khác và object sẽ được xóa khỏi toàn bộ hệ thống.
+
+- Việc xóa container yêu cầu container đó không được chứa object nào ở trong. Container database sau đó sẽ được đánh dấu là đã xóa và replicator đẩy phiên bản đó ra, đến đây là container đã bị xóa khỏi cluster
+
+<a name="53"></a>
+### 5.3 Account reaper
+- Một yêu cầu xóa account sẽ đặt account đó trong trạng thái xóa khi nó không còn được sử dụng nữa. Khi reaper xác định account được đánh dấu là đã xóa, nó sẽ loại bỏ hết container object thuộc về account đó và cuối cùng là xóa bản ghi account đó
+
+- Nó cung cấp 1 buffer chống lỗi, reaper được cấu hình để chờ đợi trong 1 khoảng thời gian nhất định trước khi xóa dữ liệu
+
+<a name="54"></a>
+### 5.4 Container và object updater
+- Tiến trình thống nhất container updater chịu trách nhiệm giữ danh sách các container của account trong 1 kì hạn nhất định. Nó cập nhất số lượng container, số lượng object và những bytes đã sử dụng trong metadata của account
+
+- Tiến trình thống nhất object updater cũng chịu trách nhiệm đảm bảo danh sách object trong container. Tuy nhiên object updater được chạy như là phần thừa. Object updater chịu trách nhiệm cập nhật danh sách object trong container. Nếu không làm như vậy, updater sẽ cố gắng thực hiện cập nhật danh sách container như là số lượng object và bytes sử dụng trong container metadata
+
+<a name="55"></a>
+### 5.5 Object expirer
+Object expiration được thiết kế để object tự động xóa trong 1 khoảng thời gian xác định. Process này được sử dụng để thanh lọc dữ liệu đã được chỉ định
+
+<a name="6"></a>
+## 6. Locating the data:
+- Để các thành phần và dịch vụ tìm được các mảnh dữ liệu trên cluster, các tiến trình sẽ tới bản sao local của Rings và tìm vị trí của dữ liệu đó trên account rings, container rings, object rings. Swift lưu trữ các bản sao của dữ liệu được lưu trữ ở đâu là kết quả của việc tìm kiếm nhiều vị trí
+
+- Ring là gì? Ring là 1 bảng tra cứu phân phối cho các node trong cluster. Swift sử dụng phiên bản hashing (băm) thích hợp cho Ring. Bắt đầu tìm hiểu với hash function
+
+- Một ví dụ thực tế của hàm băm khi ta sử dụng từ điển bách khoa toàn thư, khi tìm thông tin trong từ điển bạn chỉ cần rút ngắn thông tin bạn cần tìm trong từ điển chỉ trong vài từ (form cơ bản của hàm băm)
+
+<a name-"61"></a>
+### 6.1 Ring Basics: Hash Functions
+- Hàm băm cơ bản được sử dụng với chức năng xác định nơi lưu trữ các object. Ví dụ, khi ta tìm thông tin trong từ điển bách khoa toàn thư, cần chọn ra các cuốn cần tìm, tìm chữ liên quan. Ta cần những hàm băm cụ thể hơn để tìm dữ liệu trên nhiều ổ cứng
+
+- Hàm băm có thể được xem như là phương pháp tham chiếu ngắn hơn với dữ liệu, thay vì phải mất 1 đoạn dài  và điều quan trọng của phương pháp này là nó trả về các kết quả tương tự
+
+- Một phương pháp tương đối đơn giản trong việc xác định nơi để lưu trữ object sử dụng thuật toán MD5 để băm vị trí của object được lưu trữ sau đó lấy giá trị băm chia cho giá trị băm của số lượng ổ đĩa lưu trữ để lấy ra phần dư. Ví dụ, vị trí lưu trữ object là /account/container/object và sử dụng 4 ổ cứng để lưu trữ đặt tên từ driver 0 đến driver 3. 
+
+- Sử dụng thuật toán MD5 để lấy hàm băm của vị trí lưu trữ
+```sh
+md5 -s /account/container/object
+MD5 ("/account/container/object") = f9db0f833f1545be2e40f387d6c271de
+```
+Sau đó convert dãy số hexadecimal sang decimal rồi chia cho giá trị băm số lượng ổ
+```sh
+332115198597019796159838990710599741918 % 4 = 2
+```
+Được phần dư là 2 vậy object sẽ nằm ở driver 2
+```sh
+CHÚ Ý: Nếu thuật toán chia hết và phần dư bằng 0 thì object sẽ nằm trên driver 0
+```
+
+- Hạn chế lớn nhất của hàm băm là tính toán phụ thuộc vào chia số lượng ổ đĩa. Khi thêm hoặc bớt ổ cứng, object sẽ map tới các driver khác. Ví dụ dưới đây sẽ chứng minh:
+```sh
+Total drive count Remainder Maps to
+6 (hash) % 6 = 4 Drive 4
+7 (hash) % 7 = 6 Drive 6
+8 (hash) % 8 = 6 Drive 6
+9 (hash) % 9 = 1 Drive 1
+10 (hash) % 10 = 8 Drive 8
+```
+
+- Hầu hết object sẽ chuyển tới ổ cứng khác khi 1 ổ cứng mới thêm vào hoặc bỏ đi, do đó cần tính toán lại tất cả dữ liệu trong cluster dẫn tới cluster sẽ cần phải dành nhiều tài nguyên cho việc di chuyển của object tạo gánh nặng về đường truyền mạng và những dữ liệu sẽ không khả dụng
+
+<a name="62"></a>
+### 6.2 Ring Basic: Hàm băm phù hợp
+<img src="http://i.imgur.com/WQILEiu.png">
+- Hàm băm phù hợp giúp cho số lượng object di chuyenr khi thêm hoặc bớt ổ cứng là nhỏ nhất. Thay vì mapping trực tiếp mỗi giá trị cho 1 ổ cứng, sẽ có 1 loạt giá trị liên kết với 1 ổ cứng. Điều này thực hiện bằng cách mapping các giá trị băm có thể xảy ra xung quanh 1 vòng tròn. Mỗi ổ cứng sau đó được gán tới 1 điểm trên vòng tròn dựa vào 1 giá trị băm ổ cứng
+
+- Các phương pháp khác nhau có thể sử dụng (băm IP, băm tên ổ) kết quả là tất cả ổ đĩa được đặt theo 1 trật tự ngẫu nhiên trên vòng tròn
+
+- Khi object cần được lưu trữ, hàm băm của object được xác định và định vị trên vòng tròn. Hệ thống tìm theo chiều kim đồng hồ để xác định ổ đĩa gần nhất, đây là ổ đĩa gần nhất mà object được đặt
+
+- Với tròng tròn băm, có thể thêm hoặc bớt ổ cứng mà chỉ 1 vài object bị di chuyển. Khi thêm 1 ổ cứng, ổ cứng kế tiếp theo chiều kim đồng hồ sẽ mất đi bất kì object nào ở ổ cũ sang ổ mới, những phần còn lại sẽ được giữ nguyên => hiệu quả hơn việc hầu hết object bị di chuyển
+<img src="http://i.imgur.com/JCfSvgQ.png">
+
+- Thực tế có nhiều điểm được đánh dấu trên vòng tròn cho mỗi ổ đĩa. Hầu hết vòng tròn băm phù hợp sẽ có nhiều điểm được đánh dấu. Có thể là hàng trăm. Có nhiều điểm đánh dấu nghĩa là ổ đĩa được map tới nhiều khoảng giá trị băm nhỏ thay vì 1 cái lớn hơn
+<img src="http://i.imgur.com/QTQLFYd.png">
+
+
+
+
+
+
 
 
 

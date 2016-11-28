@@ -1,9 +1,11 @@
 # Lưu tài liệu về OpenStack Swift
 
+- Tài liệu tham khảo: OpenStack Swift-JoeArnold&SwiftStack Team
+
 # Mục lục:
-- [Chương 1: Sự phát triển của dữ liệu](https://github.com/hocchudong/Ghichep-Storage/blob/master/TriMQ/OpenStack%20Swift/Ch%C6%B0%C6%A1ng%201-Openstack%20Swift.md)
-- [Chương 2: SwiftStack](https://github.com/hocchudong/Ghichep-Storage/blob/master/TriMQ/OpenStack%20Swift/chuong2.md)
-- [Chương 3: Cấu trúc dữ liệu và kiến trúc của Swift]() 
+- [Chương 1: Sự phát triển của dữ liệu](https://github.com/trimq/Ghichep-Storage/blob/master/TriMQ/OpenStack%20Swift/Chuong1-Su_phat_trien_cua_du_lieu.md)
+- [Chương 2: SwiftStack](https://github.com/trimq/Ghichep-Storage/blob/master/TriMQ/OpenStack%20Swift/Chuong2-SwiftStack.md)
+- [Chương 3: Cấu trúc dữ liệu và kiến trúc của Swift](https://github.com/trimq/Ghichep-Storage/blob/master/TriMQ/OpenStack%20Swift/Chuong3-Cau_truc_du_lieu%26Kien_truc_Swift.md) 
 
 ## Chương 1: Sự phát triển của dữ liệu
 
