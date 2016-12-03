@@ -714,6 +714,41 @@ openstack object list container1
 openstack object save container1 tri.txt
 ```
 
+#### Các thao tác với Dashboard
+
+- Sau khi đăng nhập vào Dashboard thực hiện những bước sau để tạo Object Storage
+`admin` => `Project` => `Object Store` => `Containers` => `Container`
+<img src="http://i.imgur.com/ckpF4pD.png">
+
+- Tạo container
+<img src="http://i.imgur.com/PqlRtCB.png">
+
+- Sau khi tạo xong container, Dashboard sẽ có những thông số sau
+```sh
+Thông tin về các Object trong container
+Dung lượng
+Ngày tạo
+Public Access
+```
+<img src="http://i.imgur.com/f9OgEqj.png">
+```sh
+- Folder: Object store cho phép tạo những folder để có thể quản lý các data object dễ dàng hơn.
+Lưu ý folder này được coi là 1 Object
+
+- Upload file
+```
+- Upload file
+```sh
+1. Chọn file muốn upload lên
+2. Tải lên
+```
+<img src ="http://i.imgur.com/OrAHrZ3.png">
+
+- Với các Object tải lên, ta có thể download về
+
+- <b>Lưu ý</b>: Khi ta muốn xóa 1 container, nếu container chứa các object thì sẽ không xóa được mà phải xóa hết các object đó rồi mới xóa container được
+
+
 <a name="7"></a>
 ## 7. Tài liệu tham khảo:
 
