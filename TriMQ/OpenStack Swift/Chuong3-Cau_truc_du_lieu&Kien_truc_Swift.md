@@ -26,7 +26,11 @@
 - [6. Locating the Data](#6)
 	- [6.1 Ring Basics: Hash Functions](#61)
 	- [6.2 Ring Basics: Consistent Hashing Ring](#62)
-	- [6.3 The Rings: Modified Consistent Hashing Ring ](#63)
+	- [6.3 The Rings: Modified Consistent Hashing Ring](#63)
+		- [6.3.1 Partition](#631)
+		- [6.3.2 Partition power](#632)
+		- [6.3.3 Replica count](#633)
+		- [6.3.4 Replica lock](#634)
 	- [6.4 Distribution of Data](#64)
 - [7. Tạo và cập nhật the Rings](#7)
 	- [7.1 Tạo hoặc cập nhật Builder Files](#71)
@@ -294,6 +298,45 @@ Total drive count Remainder Maps to
 
 - Thực tế có nhiều điểm được đánh dấu trên vòng tròn cho mỗi ổ đĩa. Hầu hết vòng tròn băm phù hợp sẽ có nhiều điểm được đánh dấu. Có thể là hàng trăm. Có nhiều điểm đánh dấu nghĩa là ổ đĩa được map tới nhiều khoảng giá trị băm nhỏ thay vì 1 cái lớn hơn
 <img src="http://i.imgur.com/QTQLFYd.png">
+
+<a name="63"></a>
+### 6.3 The Rings: Modified Consistent Hashing Ring
+- Swift sử dụng hàm băm sửa đổi phù hợp. Sự sửa đổi tạo ra 1 partition băm thống nhất sử dụng replica count, replica lock và các cơ chế phân phối dữ liệu như weight và vị trí duy nhất có thể sử dụng để xác định Swift rings cá nhân
+
+- Một account ring sẽ được tạo ra cho 1 cluster và được sử dụng để xác định vị trí account, tương tự với container. Một storage policies object ring sẽ được tạo cho mỗi storage policies được sử dụng để xác định nơi lưu dữ liệu object
+
+<a name="631"></a>
+#### 6.3.1 Partition: 
+- Với hàm băm thống nhất có nhiều khoảng băm nhỏ có thể nhỏ hơn hoặc lớn hơn khi thêm hoặc bớt ổ, việc đó dẫn đến các object không sẵn có nữa khi nó bị di chuyển. Để ngăn chặn điều này Swift tiếp cận vòng băm khác nhau. Mặc dù ring vẫn chia thành các khoảng băm sẽ có kích thước giống nhau và không thay đổi về số lượng
+
+- Những partition được fix cố định sau đó gán cho ổ đĩa sử dụng 1 thuật toán sắp xếp
+
+- Cần có cái nhìn sâu sắc về việc làm cách nào partition được tính toán và làm thế nào để ổ đĩa đc gán 
+
+<a name="632"></a>
+#### 6.3.2 Partition power 
+- Tổng số partition tồn tại trong cluster được tính toán sử dụng partition power. Một số nguyên ngẫu nhiên được chọn trong quá trình tạo cluster
+```sh
+Tổng số partition trong cluster=2^partition power
+```
+- Ví dụ: Partition power là 15, số lượng partition sẽ là 2^15=32768. Vậy 32768 partition sẽ được map tới các drivers khả dụng. Số lượng ổ có thể thay đổi nhưng partition thì không bị thay đổi
+
+<a name="633"></a>
+#### 6.3.3 Replica count
+- Khi built Swift ring, replica count là giá trị có bao nhiêu bản sao của partition trong cluster. Ví dụ, bạn có replica count=3, nghĩa là mỗi partition được nhân bản lên tổng là 3 bản sao. Mỗi bản sao được lưu trong các thiết bị khác nhau trong cluster. Khi 1 object được đặt vào trong cluster, giá trị băm sẽ match vào 1 partition và được sao chép vào 3 vị trí của partition
+
+- Càng nhiều bản replicates thì dữ liệu sẽ được bảo vệ tốt hơn khi có lỗi (đặc biệt là khi phân tán các bản sao ra các DC khác hoặc region khác). Replica count là số thực, hầu hết là các số nguyên như 3.0. Trong trường hợp ngoại lệ như 3.15 nghĩa là 15% các ổ sẽ có thêm 1 bản sao trên tổng số 4. Lý do chính là bạn có thể thực hiện thay đổi dần từ bản sao số nguyên này sang 1 bản sao số nguyên khác. Điều này cho phép thời gian Swift thực hiện sao chép thêm dữ liệu mà không gây bão mạng
+
+- Partition nhân rộng định rõ hand-off drivers. Nghĩa là khi ổ đĩa hỏng, các tiến trình replication/auditing sẽ thông báo và đẩy dữ liệu vào hand-off location, làm giảm đáng kể thời gian sửa chữa so với RAID và three-way mirror
+
+- Xác suất tất cả các partition nhân rộng đều bị hỏng và dữ liệu bị đẩy ra là rất thấp. Đó là lí do Swift bền vững. Tùy thuộc vào 
+
+
+
+
+
+
+
 
 
 
