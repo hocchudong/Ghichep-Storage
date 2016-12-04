@@ -512,7 +512,7 @@ swift-ring-builder account.builder \
   --device sdc --weight 100
 ```
 
-- Xác thực nội dung của Ring
+- Kiểm chứng lại nội dung của Ring
 ```sh
 swift-ring-builder account.builder
 ```
@@ -556,7 +556,7 @@ swift-ring-builder container.builder add \
   --region 1 --zone 2 --ip 10.10.10.151 --port 6001 --device sdc --weight 100
 ```
 
-- Xác thực lại nội dung của container ring
+- Kiểm chứng lại nội dung của container ring
 
 ```sh
 swift-ring-builder container.builder
@@ -604,7 +604,7 @@ swift-ring-builder object.builder add \
   --region 1 --zone 2 --ip 10.10.10.151 --port 6000 --device sdc --weight 100
 ```
 
-- Xác thực lại nội dung của object ring
+- Kiểm chứng lại nội dung của object ring
 
 ```sh
 swift-ring-builder object.builder
