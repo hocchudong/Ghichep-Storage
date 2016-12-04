@@ -512,7 +512,7 @@ swift-ring-builder account.builder \
   --device sdc --weight 100
 ```
 
-- Xác thực nội dung của Ring
+- Kiểm chứng lại nội dung của Ring
 ```sh
 swift-ring-builder account.builder
 ```
@@ -556,13 +556,14 @@ swift-ring-builder container.builder add \
   --region 1 --zone 2 --ip 10.10.10.151 --port 6001 --device sdc --weight 100
 ```
 
-- Xác thực lại nội dung của container ring
+- Kiểm chứng lại nội dung của container ring
 
 ```sh
 swift-ring-builder container.builder
 ```
-
+Trong bước này có thể sẽ có output `Ring file account.ring.gz not found, probably it hasn't been written yet`. Đây không phải là lỗi mà do các file này chưa được update, bạn hãy sử dụng câu lệnh cân đối lại Ring (dưới đây) rồi kiểm tra lại
 - Cân đối lại Ring
+
 ```sh
 swift-ring-builder container.builder rebalance
 ```
@@ -603,11 +604,12 @@ swift-ring-builder object.builder add \
   --region 1 --zone 2 --ip 10.10.10.151 --port 6000 --device sdc --weight 100
 ```
 
-- Xác thực lại nội dung của object ring
+- Kiểm chứng lại nội dung của object ring
 
 ```sh
 swift-ring-builder object.builder
 ```
+Trong bước này có thể sẽ có output `Ring file account.ring.gz not found, probably it hasn't been written yet`. Đây không phải là lỗi mà do các file này chưa được update, bạn hãy sử dụng câu lệnh cân đối lại Ring (dưới đây) rồi kiểm tra lại
 
 - Cân đối lại Ring
 
@@ -617,6 +619,19 @@ swift-ring-builder object.builder rebalance
 
 #### Phân tán các file cấu hình ring
 Sao chép `account.ring.gz`, `container.ring.gz`, và `object.ring.gz` sang thư mục `etc/swift` của mỗi node lưu trữ
+
+- Cho phép ssh từ xa trên cả 2 node lưu trữ là `node1` và `node2`. Sửa file `/etc/ssh/sshd_config`
+```sh
+vi /etc/ssh/sshd_config
+```
+Sửa lại với nội dung như sau
+```sh
+# Authentication:
+LoginGraceTime 120
+PermitRootLogin yes
+StrictModes yes
+```
+- Thực hiện sao chép các file sang các node lưu trữ như sau:
 ```sh
 scp -r account.ring.gz container.ring.gz object.ring.gz root@10.10.10.150:/etc/swift
 ```
@@ -624,7 +639,7 @@ và
 ```sh
 scp -r account.ring.gz container.ring.gz object.ring.gz root@10.10.10.151:/etc/swift
 ```
-<b>Chú ý:</b> Nên vào các node lưu trữ để kiểm tra lại
+<b>Chú ý:</b> Nên vào các node lưu trữ để kiểm tra lại xem các file đã được copy từ node controller sang chưa.
 
 <a name="5"></a>
 ### 5. Hoàn thành các bước cài đặt
