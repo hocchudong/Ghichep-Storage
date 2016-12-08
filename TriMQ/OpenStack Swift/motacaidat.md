@@ -38,7 +38,7 @@ add-apt-repository cloud-archive:mitaka
 ```
 Thực hiện lệnh trên để thêm các gói phần mềm vào kho phần mềm, sau đó update lại các gói phần mềm và khởi động lại máy
 ```sh
-apt-get update && apt-get dist-upgrade && init 6 -y 
+apt-get update && apt-get dist-upgrade && init 6 -y
 ```
 
 <a name="2"></a>
@@ -108,18 +108,25 @@ mkfs.xfs /dev/sdc
 ```
 
 - Thực hiện mount vào thư mục `/srv/node` đây là thư mục chứa dữ liệu của các dịch vụ
+
 ```sh
 mount /srv/node/sdb
 mount /srv/node/sdc
 ```
 
-- Config file `/etc/rsyncd.conf` là dịch vụ đồng bộ dữ liệu giữa các node lưu trữ
+- Config file `/etc/rsyncd.conf` là dịch vụ đồng bộ dữ liệu giữa các node lưu trữ. Khi cấu hình, dịch vụ này đã bị ẩn đi. Để enable dịch vụ này thì chỉnh sửa như sau
+
+```sh
+RSYNC_ENABLE=true
+```
+
 	- uid (user identification) là swift
 	- gid (group id) là swift
 	- Kết nối tối đa ở đây là 2 thiết bị lưu trữ
 	- Địa chỉ file log /var/log/rsyncd
 	- Bộ điều khiển PID nằm ở file /var/run/rsyncd.pid
 	- IP node lưu trữ: 10.10.10.150
+
 ```sh
 uid = swift
 gid = swift
@@ -145,6 +152,7 @@ path = /srv/node/
 read only = False
 lock file = /var/lock/object.lock
 ```
+
 Các thiết bị lưu trữ nằm ở thư mục `/srv/node/`, lock file nằm ở `/var/lock/account.lock`
 
 - Cấu hình file `/etc/swift/account-server.conf`
@@ -154,6 +162,7 @@ Các thiết bị lưu trữ nằm ở thư mục `/srv/node/`, lock file nằm 
 	- thư mục của swift là /etc/swift
 	- thiết bị được lưu ở /srv/node
 	- có kiểm tra thiết bị mount
+
 ```sh
 [DEFAULT]
 bind_ip = 10.10.10.150
@@ -164,6 +173,64 @@ devices = /srv/node
 mount_check = True
 ```
 
+- Cấu hình trong section dưới đây để thu thập dữ liệu và theo dõi từ xa các tiến trình account-server theo pipeline
 
+```sh
+[pipeline:main]
+pipeline = healthcheck recon account-server
+```
+- Tạo bộ lọc cho recon, thư mục chứa các thông tin mà recon lấy được từ các tiến trình account-server :
 
+```sh
+[filter:recon]
+use = egg:swift#recon
+recon_cache_path = /var/cache/swift
+```
+Khi kiểm tra sẽ có những thông tin như sau
 
+```sh
+{"replication_stats": {"no_change": 0, "rsync": 0, "success": 0, "start": 1481098962.310588, "attempted": 2, "ts_repl": 0, "remove": 0, "remote_merge": 0, "diff_capped": 0, "failure": 4, "hashmatch": 0, "failure_nodes": {"10.10.10.151": {"sdb": 2, "sdc": 2}}, "diff": 0, "empty": 0}, "account_audits_since": 1481092457.164096, "replication_last": 1481098967.30939, "account_audits_passed": 5, "account_audits_failed": 0, "account_auditor_pass_completed": 0.075653076171875, "replication_time": 4.998802185058594}
+```
+
+<a name="4"></a>
+## 4. Cài đặt Ring:
+- Thay đổi sang thư mục `/etc/swift` để thực hiện những bước cài đặt tiếp theo
+```sh
+cd /etc/swift
+```
+
+- Tạo file cơ sở account.builder. Đây là các file được Swift sử dụng để xây dựng nên Ring
+```sh
+swift-ring-builder account.builder create 10 3 1
+```
+Câu lệnh trên đã tạo 1 file cơ sở là account.builder với các thông số:
+	- part_power = 10. Chỉ số này là số partition được tạo ra trong cluster
+	- replicas = 3. Chỉ số này là số replicas được lưu trong cluster
+	- min_part_hours 1. Chỉ số này là tần suất các bản replicas được di chuyển trong cluster
+
+- Thêm các thiết bị vào file cơ sở, mục đích là để các file cơ sở này kiểm soát được các thiết bị để xây dựng Ring
+```sh
+swift-ring-builder account.builder \
+  add --region 1 --zone 1 --ip 10.10.10.150 --port 6002 \
+  --device sdb --weight 100
+```
+Câu lệnh này có nghĩa là add các thông tin về thiết bị lưu trữ vào file cơ sở
+	- Thêm vào region là 1
+	- Thêm vào zone là 2
+	- Địa chỉ IP của node là 10.10.10.150
+	- Sử dụng port 6002
+	- Thiết bị lưu trữ là sdb
+	- Chỉ số weight là 100. Chỉ số này nhằm xác định số partition được gán vào drivers
+
+Trong mô hình này là 1 region, 2 zones, và 4 thiết bị lưu trữ nên phải thực hiện câu lệnh trên 4 lần và phải thay các chỉ số tương ứng với thiết bị gán vào file cơ sở
+
+- Kiểm chứng lại nội dung của file cơ sở
+```sh
+swift-ring-builder account.builder
+```
+Câu lệnh này có mục đích là để liệt kê lại các thiết bị được gán vào.
+
+- Cân đối lại Ring
+```sh
+swift-ring-builder account.builder rebalance
+```
