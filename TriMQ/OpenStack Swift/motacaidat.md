@@ -192,6 +192,13 @@ Khi kiểm tra sẽ có những thông tin như sau
 {"replication_stats": {"no_change": 0, "rsync": 0, "success": 0, "start": 1481098962.310588, "attempted": 2, "ts_repl": 0, "remove": 0, "remote_merge": 0, "diff_capped": 0, "failure": 4, "hashmatch": 0, "failure_nodes": {"10.10.10.151": {"sdb": 2, "sdc": 2}}, "diff": 0, "empty": 0}, "account_audits_since": 1481092457.164096, "replication_last": 1481098967.30939, "account_audits_passed": 5, "account_audits_failed": 0, "account_auditor_pass_completed": 0.075653076171875, "replication_time": 4.998802185058594}
 ```
 
+- Tạo thư mục `recon` để chứa các thông tin mà recon lấy được từ các tiến trình và phân quyền cho thư mục đó
+```sh
+mkdir -p /var/cache/swift
+chown -R root:swift /var/cache/swift
+chmod -R 775 /var/cache/swift
+```
+
 <a name="4"></a>
 ## 4. Cài đặt Ring:
 - Thay đổi sang thư mục `/etc/swift` để thực hiện những bước cài đặt tiếp theo
@@ -224,6 +231,8 @@ Câu lệnh này có nghĩa là add các thông tin về thiết bị lưu trữ
 
 Trong mô hình này là 1 region, 2 zones, và 4 thiết bị lưu trữ nên phải thực hiện câu lệnh trên 4 lần và phải thay các chỉ số tương ứng với thiết bị gán vào file cơ sở
 
+- <b>Chú ý</b>: Phải thực hiện gán các thiết bị vào các file cơ sở account.builder, container.builder, objec.builder do vậy phải thực hiện lại các bước tạo file cơ sở của container, object và gán như trên
+
 - Kiểm chứng lại nội dung của file cơ sở
 ```sh
 swift-ring-builder account.builder
@@ -234,3 +243,47 @@ Câu lệnh này có mục đích là để liệt kê lại các thiết bị �
 ```sh
 swift-ring-builder account.builder rebalance
 ```
+
+- Copy các file `account.ring.gz`, `container.ring.gz` và `objec.ring.gz` sang các node lưu trữ để build Ring trên các node lưu trữ
+```sh
+scp -r account.ring.gz container.ring.gz object.ring.gz root@10.10.10.150:/etc/swift
+```
+Câu lệnh này có nghĩa copy 3 file vào thư mục /etc/swift trên node lưu trữ có địa chỉ IP 10.10.10.150 với quyền root. Làm tương tự và thay địa chỉ IP với node lưu trữ còn lại
+
+<a name="5"></a>
+## 5. Hoàn thành các bước cài đặt
+- Nhận file swift.conf sử dụng công cụ curl, đây là file chứa các thông tin về storage policy của swift
+```sh
+curl -o /etc/swift/swift.conf \
+  https://git.openstack.org/cgit/openstack/swift/plain/etc/swift.conf-sample?h=stable/mitaka
+```
+
+- Trong section `[swift-hash]` sửa các đoạn sau, nhập các giá trị tên đường dẫn theo strings vào các đoạn cấu hình sau:
+```sh
+[swift-hash]
+swift_hash_path_suffix = HASH_PATH_SUFFIX
+swift_hash_path_prefix = HASH_PATH_PREFIX
+```
+swift_hash_path_prefix và swift_hash_path_suffix sử dụng để ngăn chặn các cuộc tấn công DOS, nếu biết được các giá trị này thì có thể xác định được partition nơi mà object được lưu từ đó sẽ tạo ra các container và object vào partition đó cho đến khi full partition. Do vậy cần dữ chuỗi kí tự này bí mật. Có thể sử dụng phương pháp sau để lấy ra 1 giá trị
+```sh
+head -c 32 /dev/random | base64
+```
+
+- Trong section storage-policy:0 chỉnh sửa
+```sh
+[storage-policy:0]
+name = Policy-0
+default = yes
+```
+Ở đây sử dụng policy-0 
+
+
+
+
+
+
+
+
+
+
+
