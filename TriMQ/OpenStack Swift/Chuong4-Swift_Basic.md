@@ -6,7 +6,11 @@
 - [3. Ủy quyền và thực hiện](#3)
 - [4. Nhận phản hồi](#4)
 - [5. Các tool giao tiếp](#5)
-- [6. Các ví dụ](#6)
+	- [5.1 Câu lệnh (CLI)](#51)
+	- [5.2 Ứng dụng client tùy chọn](#52)
+- [6. Các ví dụ kịch bản](#6)
+	- [6.1 Uploading (PUT)](#61)
+	- [6.2 Downloading (GET)](#62)
 - [7. Tài liệu tham khảo](#7)
 
 ===========================
@@ -52,7 +56,7 @@ Có 2 vai trò:
 <ul>
 <li>Vị trí cluster (swift.example.com/v1/): Phần đầu của storage URL là 1 endpoint trong cluster. Nó được sử dụng bởi mạng sẽ định tuyến yêu cầu tới node với 1 proxy process bởi vậy request có thể được kiểm soát</li>
 <li>Vị trí lưu trữ: bảo gồm 1 hay nhiều thành phần làm nên sự duy nhất cho vị trí của dữ liệu, có 3 format tùy vào tài nguyên yêu cầu</li>
-</ul>	
+</ul>
 
 - <b>Chú ý</b>: Trong Swift các object có thể chứa kí tự "/" việc này có nghĩa là các object có thể lồng vào nhau
 
@@ -60,7 +64,7 @@ Có 2 vai trò:
 ### 2.2 Ủy quyền
 - Việc đầu tiên Swift thực hiện với 1 request là xác thực người gửi. Ủy quyền được hoàn thành bởi so sánh thông tin người cung cấp và thông tin xác thực mà Swift sử dụng
 
-- Có 2 cách xác thực 
+- Có 2 cách xác thực
 <ul>
 <li>Thông qua thông tin xác thực với mỗi lần gửi yêu cầu</li>
 <li>Thông qua xác thực token bởi thực hiện 1 yêu càu xác thực đặc biệt trước khi thực hiện yêu cầu lưu trữ</li>
@@ -108,22 +112,90 @@ Sau khi xác thực thành công, Swift sẽ xem xét các yêu cầu để xác
 
 <a name="5"></a>
 ## 5. Các tool giao tiếp
-- Người dùng và admin thường quan tâm về yêu cầu-phản hồi HTTP sử dụng ứng dụng client. 
+- Người dùng và admin thường quan tâm về yêu cầu-phản hồi HTTP sử dụng ứng dụng client.
 
 - Ứng dụng Swift client có thể ở nhiều dạng, từ commandline giao diện đồ họa.
 
 - CLI là tất cả những gì bạn cần để thực hiện hoạt động đơn giản trên Swift cluster. Bởi vì ngôn ngữ tự nhiên của hệ thống Swift là HTTP, commande-lint tool như cURL là cách tốt nhất để giao tiếp vs Swift ở lớp thấp. Tuy nhiên, gửi nhiều yêu cầu HTTP cùng 1 lúc và giải nén các thông tin lên liên quan đến kết quả có thể có 1 chút vướng mắc. Vì lý do này mà mọi người thích sử dụng Swift ở tầng cao hơn. Như sử dụng thư viện client Swift thay vì làm việc với HTTP cơ bản
 
-- Command-Line Interfaces
-Chúng ta sẽ xem xét 2 câu lệnh cURL vs Swift. Cả 2 câu lệnh đều cho phép người dùng gửi yêu cầu 1 dòng 1 lần tới các Swift Cluster. 
+<a name="51"></a>
+### 5.1 Command-Line Interfaces
+Chúng ta sẽ xem xét 2 câu lệnh cURL vs Swift. Cả 2 câu lệnh đều cho phép người dùng gửi yêu cầu 1 dòng 1 lần tới các Swift Cluster.
+
+#### Sử dụng cURL
+- cURL là công cụ truyền dữ liệu tới hoặc từ server, sử dụng cú pháp câu lệnh là `curl`. Có thể được cài đặt sẵn trên hệ thống hoặc có thể tải về. Truyền dữ liệu thông qua HTTP verb
+
+- Cú pháp câu lệnh:
+
+```sh
+curl -X <HTTP-verb> [...] <Storage-URL> <object.ext>
+```
+
+<ul>
+<li>curl là cú pháp lệnh</li>
+<li>-X là option cung cấp các HEAD verb</li>
+<li><HTTP-verb là các động từ để yêu cầu vào hệ thống Swift</li>
+<li>[...] là các thông tin xác thực, ở đây ghi tắt để câu lệnh có thể được nhìn dễ dàng hơn</li>
+<li><Storage-URL địa chỉ nơi dữ liệu được yêu cầu</li>
+</ul>
+
+- HTTP-verb có thể là:
+<ul>
+<li>PUT: tạo vị trí lưu trữ mới</li>
+<li>GET: list danh sách object, container có trong container hoặc trong account</li>
+</ul>
+
+#### Sử dụng câu lệnh swift
+- Câu lệnh `swift` có thể có sẵn hoặc có thể tải về gói python-swiftclient để sử dụng
+
+- Tương tự công cụ cURL sử dụng câu lệnh thì swift cũng sử dụng câu lệnh là `swift`
+
+- Câu lệnh này phổ biến bởi cú pháp dễ nhớ và những HTTP-verb thân thiện hơn cURL. Tuy nhiên swift command có 1 số hạn chế vì  trong hệ thống Swift có 1 số HTTP request câu lệnh swift không thực hiện được
+
+- Cú pháp câu lệnh
+
+```sh
+swift HTTP-verb [...] Storage-URL
+```
+
+- Các câu lệnh HTTP-verb là:
+<ul>
+<li>list là liệt kê các container, object có trong account hoặc container</li>
+<li>download tải về các object</li>
+</ul>
+
+<a name="52"></a>
+### 5.2 Ứng dụng client tùy chọn
+- Mặc dù các câu lệnh được sử dụng đơn giản nhưng có nhiểu người muốn sử dụng những ứng dụng client phức tạp hơn với những tùy biến
+
+- Các nhà phát triển ứng dụng có thể xây dựng yêu cầu HTTP và phân tích HTTP phản hồi sử dụng thư viện ngôn ngữ lập trình của họ. Hoặc có thể sử dụng thư viện Swift nguồn mở
+
+- Các thư viện client nguồn mở cho Swift có sẵn những ngôn ngữ lập trình phổ biến như:
+<ul>
+<li>Python</li>
+<li>Ruby</li>
+<li>PHP</li>
+<li>C#/.NET</li>
+<li>Java</li>
+</ul>
+
+- Các thông tin thêm về phát triển Swift API sẽ được tìm thấy trong chương 6 và chương 7
 
 
+<a name="6"></a>
+## 6. Các ví dụ kịch bản
+Xem xét 2 kịch bản tải lên và tải về sau đây sẽ giúp hiểu rõ hơn về cách Swift hoạt động
+
+<a name="61"></a>
+### 6.1 Uploading (PUT)
+Client sử dụng Swift API để tạo yêu cầu HTTP PUT 1 object vào 1 container. Sau khi nhận yêu cầu PUT, tiến trình proxy server xác định vị trí dữ liệu hướng tới. Tên account, tên container, tên object, tất cả được sử dụng để xác định partion nơi mà object được lưu. 1 tra cứu trong rings thích hợp sẽ được sử dụng để map vị trí lưu trữ (/account/container/object) tới partion và với tập các nodes lưu trữ trong đó có mỗi bản sao của partion được phân công
+Dữ liệu được gửi tới từng node lưu trữ, nơi mà có các partion thích hợp. Khi phần lớn dữ liệu được viết thành công, tiến trình máy chủ proxy có thể thông báo tới khách hàng quá trình upload đã thành công, VÍ dụ nếu bạn sử dụng 3 bản sao thì khi viết được 2 bản sao sẽ là thành công. Sau đó database container sẽ được cập nhật không đồng bộ để thể hiện các đối tượng mới trong container
+
+<a name="62"></a>
+## 6.2 Downloading (GET)
+Một yêu cầu đến tiến trình máy chủ proxy  /account/container/object Sử dụng ring phù hợp để tra cứu, các partion của yêu cầu sẽ được xác định, cùng với tập hợp các node lưu trữ vùng đó. Mỗi yêu cầu sẽ được gửu đến các node lưu trữ để lấy tài nguyên. Sau khi yêu cầu trả về object thì tiến tình proxy sẽ trả về cho client.
 
 
-
-	
-	
-	
-
-
-
+<a name="7"></a>
+## 7. Tài liệu tham khảo
+- [1] Openstack Swift - Joe Arnold&members of the SwiftStack team
