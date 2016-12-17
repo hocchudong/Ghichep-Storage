@@ -163,6 +163,11 @@ dung lượng (bytes)= số sector*521
 <li>2 giá trị first sector và last sector sẽ quyết định xem phân vùng mà bạn chia có dung lượng là bao nhiêu, tương đương với số lượng sector mà phân vùng có</li>
 </ul>
 
+<a name="3"></a>
+## Tài liệu tham khảo
+- [1]- http://www.computerhope.com/unix/fdisk.htm
+- [2]- https://www.cyberciti.biz/faq/linux-viewing-drive-partitions-with-fdisk-parted/
+
 	
 
  
